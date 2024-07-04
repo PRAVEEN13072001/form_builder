@@ -1,0 +1,9 @@
+.link {
+    line-height: 1;
+    padding: rem(8px) rem(12px);
+    border-radius: 2%;
+    text-decoration: none;
+    color: white;
+    font-size: 15;
+    font-weight: 500;
+}

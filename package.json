@@ -1,0 +1,64 @@
+{
+  "name": "my-react-app",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@mantine/core": "^7.8.0",
+    "@mantine/form": "^7.8.0",
+    "@mantinex/mantine-logo": "^1.0.1",
+    "@react-form-builder/components-rsuite": "^1.1.0",
+    "@react-form-builder/core": "^1.1.0",
+    "@react-form-builder/designer": "^1.1.0",
+    "@tabler/icons-react": "^3.5.0",
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "bootstrap": "^4.0.0",
+    "chart.js": "^4.4.3",
+    "dotenv": "^16.4.5",
+    "firebase": "^10.11.0",
+    "firebase-admin": "^12.1.0",
+    "font-awesome": "^4.7.0",
+    "formik": "^2.4.6",
+    "jquery": "^3.3.1",
+    "jquery-ui": "^1.12.1",
+    "jquery-ui-dist": "^1.12.1",
+    "jquery-ui-timepicker-addon": "^1.6.3",
+    "lodash": "^4.17.5",
+    "popper.js": "^1.12.9",
+    "react": "^18.2.0",
+    "react-chartjs-2": "^5.2.0",
+    "react-dom": "^18.2.0",
+    "react-modal": "^3.16.1",
+    "react-router-dom": "^6.22.3",
+    "react-scripts": "5.0.1",
+    "react-toastify": "^10.0.5",
+    "survey-creator-react": "^1.10.4",
+    "survey-react-ui": "^1.10.4",
+    "web-vitals": "^2.1.4"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

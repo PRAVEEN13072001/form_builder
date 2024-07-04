@@ -1,0 +1,46 @@
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(4, 300px);
+    /* Ensure 4 items in a row with fixed size */
+    gap: 5px;
+    /* Adjust the gap between squares */
+    overflow: auto;
+    /* Enable scrolling */
+    max-width: 100%;
+    /* Ensure the grid doesn't overflow its container */
+}
+
+.grid-item {
+background-color: transparent;
+    /* Set background color */
+    width: 300px;
+    /* Set fixed width */
+    height: 300px;
+    /* Set fixed height */
+    padding: 20px;
+    /* Set padding */
+    text-align: center;
+    /* Center content */
+}
+
+/* Media queries for responsiveness */
+@media (max-width: 1200px) {
+    .grid-container {
+        grid-template-columns: repeat(3, 300px);
+        /* Adjust for smaller screens */
+    }
+}
+
+@media (max-width: 900px) {
+    .grid-container {
+        grid-template-columns: repeat(2, 300px);
+        /* Adjust for even smaller screens */
+    }
+}
+
+@media (max-width: 600px) {
+    .grid-container {
+        grid-template-columns: 300px;
+        /* For the smallest screens, ensure only one item per row */
+    }
+}
