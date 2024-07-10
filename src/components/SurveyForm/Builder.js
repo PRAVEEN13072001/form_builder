@@ -4,16 +4,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useEffect, useState } from "react";
 import { Modal, Button, Select, TextInput } from '@mantine/core';
 import { useNavigate } from "react-router-dom";
-
-const creatorOptions = {
-  showLogicTab: true,
-  isAutoSave: true,
-  questionTypes: ["text", "comment", "checkbox", "radiogroup", "dropdown", "boolean", "ranking"]
-};
-
-const defaultJson = {
-
-};
+import { creatorOptions, defaultJson, apiEndpoints, messages, formTypes } from './messages.js/BuilderTexts';
 
 function getCookie(name) {
   const value = `; ${document.cookie}`;
@@ -36,11 +27,9 @@ export default function SurveyCreatorWidget() {
   const baseUrl = new URL(currentUrl).origin;
 
   try {
-    // Get token from cookies
     const token = getCookie('token');
 
-    // Encrypt the ID
-    const encryptResponse = await fetch('http://localhost:5000/encryptId', {
+    const encryptResponse = await fetch(apiEndpoints.encryptId, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -51,13 +40,12 @@ export default function SurveyCreatorWidget() {
     });
 
     if (!encryptResponse.ok) {
-      throw new Error('Failed to encrypt ID');
+      throw new Error(messages.errorEncryptId);
     }
 
     const { encryptedId } = await encryptResponse.json();
 
-    // Update the link with the encrypted ID
-    const updateResponse = await fetch('http://localhost:5000/updateLink', {
+    const updateResponse = await fetch(apiEndpoints.updateLink, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -71,29 +59,28 @@ export default function SurveyCreatorWidget() {
     });
 
     if (updateResponse.ok) {
-      toast.success("Your form has been saved successfully!");
+      toast.success(messages.successFormSave);
       setLink(`${baseUrl}/forms?id=${encryptedId}`);
       Navigate("/");
     } else {
-      toast.error("Failed to save the form link. Please try again later.");
+      toast.error(messages.errorSaveLink);
     }
   } catch (error) {
     console.error("Error saving form LINK:", error);
-    toast.error("An error occurred while saving the form LINK.");
+    toast.error(messages.errorGeneral);
   }
 };
 
-
   const publishForm = async (isDraft = false) => {
     if (!isDraft && (type === "one-time" || type === "recurring") && (!startDate || !endDate)) {
-      toast.error("Please provide both start and end dates.");
+      toast.error(messages.errorDateRange);
       return;
     }
 
     try {
       const token = getCookie('token');
       const creatorJSON = JSON.parse(creator.text);
-      const response = await fetch('http://localhost:5000/formSave', {
+      const response = await fetch(apiEndpoints.formSave, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -109,17 +96,17 @@ export default function SurveyCreatorWidget() {
         })
       });
       if (response.ok) {
-        toast.success("Your form has been saved successfully!");
+        toast.success(messages.successFormSave);
         let res = await response.json();
         if (!isDraft) {
           updateLink(res.savedFormData.id);
         }
       } else {
-        toast.error("Failed to save the form data. Please try again later.");
+        toast.error(messages.errorFormSave);
       }
     } catch (error) {
       console.error("Error saving form data:", error);
-      toast.error("An error occurred while saving the form data.");
+      toast.error(messages.errorGeneral);
     }
   };
 
@@ -130,7 +117,7 @@ export default function SurveyCreatorWidget() {
   const handleSubmitModal = () => {
     if (type === "one-time" || type === "recurring") {
       if (!startDate || !endDate) {
-        toast.error("Please provide both start and end dates.");
+        toast.error(messages.errorDateRange);
         return;
       }
     } else if (type === "open") {
@@ -161,11 +148,7 @@ export default function SurveyCreatorWidget() {
         <Select
           label="Form Type"
           placeholder="Pick one"
-          data={[
-            { value: 'open', label: 'Open' },
-            { value: 'one-time', label: 'One-time' },
-            { value: 'recurring', label: 'Recurring' }
-          ]}
+          data={formTypes}
           value={type}
           onChange={setType}
         />

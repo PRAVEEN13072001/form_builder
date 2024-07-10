@@ -4,6 +4,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useEffect, useState } from "react";
 import { Modal, Button, TextInput } from '@mantine/core';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate from react-router-dom
+import { SAVE_TEMPLATE_URL, MESSAGES } from './messages.js/templateCreateTexts'; // Import constants and messages from config.js
 
 const creatorOptions = {
   showLogicTab: true,
@@ -46,12 +47,11 @@ export default function TemplateCreatorWidget() {
     setModalIsOpen(true); // Open modal on component mount for template creation
   }, []);
 
- 
   const saveTemplateData = async (isDraft) => {
     try {
       const token = getCookie('token');
       const creatorJSON = JSON.parse(creator.text);
-      const response = await fetch('http://localhost:5000/templateSave', {
+      const response = await fetch(SAVE_TEMPLATE_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -65,16 +65,16 @@ export default function TemplateCreatorWidget() {
         })
       });
       if (response.ok) {
-        toast.success("Your template has been saved successfully!", {
+        toast.success(MESSAGES.SUCCESS_SAVE, {
           onClose: () => navigate('/') // Navigate to home.jsx after successful toast
         });
         let res = await response.json();
       } else {
-        toast.error("Failed to save the template data. Please try again later.");
+        toast.error(MESSAGES.ERROR_SAVE_FAIL);
       }
     } catch (error) {
       console.error("Error saving template data:", error);
-      toast.error("An error occurred while saving the template data.");
+      toast.error(MESSAGES.ERROR_SAVE);
     }
   };
 
@@ -89,10 +89,10 @@ export default function TemplateCreatorWidget() {
   const handleSaveButtonClick = () => {
     saveTemplateData(false);
   };
-  const handleSaveDraftButtonClick=()=>
-    {
-      saveTemplateData(true);
-    }
+
+  const handleSaveDraftButtonClick = () => {
+    saveTemplateData(true);
+  };
 
   return (
     <div>

@@ -15,6 +15,7 @@ import {
 } from '@mantine/core';
 import GoogleButton from '../components/GoogleButton';
 import { ToastMessages, DefaultTexts } from "./messages/loginTexts"; // Adjust the path as necessary
+import { URLs } from './messages/apiUrls'; // Import the URLs
 
 export default function AuthenticationImage() {
   const [userName, setUserName] = useState('');
@@ -47,7 +48,7 @@ export default function AuthenticationImage() {
         return;
       }
 
-      const response = await fetch('http://localhost:5000/loginUserName', {
+      const response = await fetch(URLs.LOGIN, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -84,7 +85,7 @@ export default function AuthenticationImage() {
         return;
       }
 
-      const checkResponse = await fetch('http://localhost:5000/checkUser', {
+      const checkResponse = await fetch(URLs.CHECK_USER, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -97,7 +98,7 @@ export default function AuthenticationImage() {
         return;
       }
 
-      const response = await fetch('http://localhost:5000/forgot-password', {
+      const response = await fetch(URLs.FORGOT_PASSWORD, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

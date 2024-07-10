@@ -5,6 +5,17 @@ import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import surveyData from "./templatesData"; // Assuming surveyData.js is in the same directory
 import { Modal, Button, TextInput } from '@mantine/core';
+import {
+  FETCH_TEMPLATE_URL,
+  SAVE_TEMPLATE_URL,
+  SUCCESS_MESSAGE,
+  ERROR_MESSAGE_FETCH,
+  ERROR_MESSAGE_SAVE,
+  WARNING_NO_SURVEY,
+  ERROR_NO_TOKEN,
+  ERROR_FETCH_FAIL,
+  ERROR_SAVE_FAIL
+} from './messages.js/buildTemplateTexts'; // Importing constants from config.js
 
 // Function to get survey by title from local surveyData
 function getSurveyByTitle(formName) {
@@ -42,7 +53,7 @@ export default function SurveyCreatorWidget() {
           // If not found locally, make a fetch request with a token
           const token = getTokenFromCookie();
           if (token) {
-            const response = await fetch('http://localhost:5000/getTemplates', {
+            const response = await fetch(FETCH_TEMPLATE_URL, {
               method: "POST",
               headers: {
                 'Authorization': `Bearer ${token}`
@@ -65,10 +76,10 @@ export default function SurveyCreatorWidget() {
                 throw new Error('Fetched data is not structured as expected');
               }
             } else {
-              throw new Error('Failed to fetch data from server');
+              throw new Error(ERROR_FETCH_FAIL);
             }
           } else {
-            throw new Error('Token not found in cookies');
+            throw new Error(ERROR_NO_TOKEN);
           }
         }
         
@@ -79,12 +90,12 @@ export default function SurveyCreatorWidget() {
           setCreator(surveyCreator);
           setLoad(true);
         } else {
-          console.warn("No survey found with the name:", name);
-          setError("No survey found with the provided name."); // Inform user
+          console.warn(WARNING_NO_SURVEY);
+          setError(WARNING_NO_SURVEY); // Inform user
         }
       } catch (error) {
         console.error("Error:", error.message);
-        setError("An error occurred while fetching the survey data."); // Handle generic errors
+        setError(ERROR_MESSAGE_FETCH); // Handle generic errors
       }
     };
 
@@ -96,7 +107,7 @@ export default function SurveyCreatorWidget() {
     try {
       const token = getTokenFromCookie();
       const creatorJSON = JSON.parse(creator.text);
-      const response = await fetch('http://localhost:5000/templateSave', {
+      const response = await fetch(SAVE_TEMPLATE_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -110,16 +121,16 @@ export default function SurveyCreatorWidget() {
         })
       });
       if (response.ok) {
-        toast.success("Your template has been saved successfully!", {
+        toast.success(SUCCESS_MESSAGE, {
           onClose: () => navigate('/') // Navigate to home.jsx after successful toast
         });
         let res = await response.json();
       } else {
-        toast.error("Failed to save the template data. Please try again later.");
+        toast.error(ERROR_SAVE_FAIL);
       }
     } catch (error) {
       console.error("Error saving template data:", error);
-      toast.error("An error occurred while saving the template data.");
+      toast.error(ERROR_MESSAGE_SAVE);
     }
   };
 

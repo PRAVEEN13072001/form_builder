@@ -4,6 +4,7 @@ import { Survey, Model } from 'survey-react-ui';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Modal from './Modal'; // Import the Modal component
+import { API_URLS, MESSAGES } from './messages.js/viewerTexts'; // Import constants and messages from config.js
 
 export default function App() {
   const [formArray, setFormArray] = useState(null);
@@ -25,7 +26,7 @@ export default function App() {
   const fetchDecryptedId = async (encryptedId) => {
     try {
       const token = getTokenFromCookie();
-      const response = await fetch('http://localhost:5000/decryptId', {
+      const response = await fetch(API_URLS.DECRYPT_ID, {
         method: 'POST',
         headers: {
           'Authorization': 'Bearer ' + token,
@@ -37,7 +38,7 @@ export default function App() {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to decrypt ID');
+        throw new Error(MESSAGES.DECRYPT_ID_FAIL);
       }
 
       const decryptedData = await response.json();
@@ -60,7 +61,7 @@ export default function App() {
   const checkForm = async (formId) => {
     try {
       const token = getTokenFromCookie();
-      const response = await fetch('http://localhost:5000/ArrayForm?id=' + formId, {
+      const response = await fetch(`${API_URLS.ARRAY_FORM}?id=${formId}`, {
         headers: {
           'Authorization': 'Bearer ' + token,
           'Content-Type': 'application/json',
@@ -68,7 +69,7 @@ export default function App() {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to fetch form data');
+        throw new Error(MESSAGES.FETCH_FORM_FAIL);
       }
 
       const formData = await response.json();
@@ -106,7 +107,7 @@ export default function App() {
         };
       });
 
-      const response = await fetch('http://localhost:5000/ResponseSave', {
+      const response = await fetch(API_URLS.RESPONSE_SAVE, {
         method: 'POST',
         headers: {
           'Authorization': 'Bearer ' + token,
@@ -119,18 +120,18 @@ export default function App() {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to save response data');
+        throw new Error(MESSAGES.SAVE_RESPONSE_FAIL);
       }
 
       const savedResponseData = await response.json();
       console.log('Response saved:', savedResponseData);
 
       // Show toast notification on successful save
-      toast.success('Response saved successfully!');
+      toast.success(MESSAGES.SAVE_RESPONSE_SUCCESS);
 
     } catch (error) {
       console.error('Error saving response data:', error);
-      toast.error('Failed to save response data');
+      toast.error(MESSAGES.SAVE_RESPONSE_FAIL);
     }
   }, [location.search, getTokenFromCookie]);
 

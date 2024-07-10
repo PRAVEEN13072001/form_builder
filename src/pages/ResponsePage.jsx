@@ -5,12 +5,17 @@ import Header from '../components/header';
 import { IconFileSpreadsheet } from '@tabler/icons-react';
 import { useLocation } from "react-router-dom";
 import { saveAs } from 'file-saver';
-import { ToastMessages, DefaultTexts } from "./messages/ResponseTexts";
+import { ToastMessages, DefaultTexts,typeTexts } from "./messages/ResponseTexts";
 import BarChart from "../components/bar"; // Adjust the import path as needed
+import IndividualResponseCard from "../components/ResponsePage/IndividualResponseCard";
+import { URLs } from './messages/apiUrls';
+
 
 const ResponsePage = () => {
   const [responses, setResponses] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [individualResponses, setIndividualResponses] = useState([]);
+  const [currentResponseIndex, setCurrentResponseIndex] = useState(0);
   const [type, setType] = useState("Questions");
   const location = useLocation();
   const params = new URLSearchParams(location.search);
@@ -27,24 +32,24 @@ const ResponsePage = () => {
           return null;
         }
       }
-
       const token = getTokenFromCookie();
       try {
-        const response = await fetch('http://localhost:5000/getResponse', {
+        const response = await fetch(URLs.RESPONSES, {
           method: "post",
           headers: {
             Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ 'FormId': id })
+          body: JSON.stringify({ 'formId': id })
         });
 
         if (response.ok) {
           const data = await response.json();
-          console.log('Fetched data:', data);
+          const val = data.data;
           
+
           const groupedResponses = [];
-          const values = Object.values(data.data);
+          const values = Object.values(val);
           values.forEach(subArray => {
             subArray.forEach(item => {
               const existingResponse = groupedResponses.find(response => response.title === item.title);
@@ -55,7 +60,6 @@ const ResponsePage = () => {
               }
             });
           });
-          console.log(groupedResponses);
           setResponses(groupedResponses);
           setIsLoading(false);
         } else {
@@ -65,9 +69,47 @@ const ResponsePage = () => {
         console.error(ToastMessages.FETCH_RESPONSE_ERROR, error);
       }
     }
-
     fetchResponses();
   }, [id]);
+
+   useEffect(() => {
+    async function fetchIndividualResponses() {
+      function getTokenFromCookie() {
+        const cookies = document.cookie.split(';');
+        const tokenCookie = cookies.find(cookie => cookie.trim().startsWith('token='));
+        if (tokenCookie) {
+          return tokenCookie.split('=')[1];
+        } else {
+          return null;
+        }
+      }
+      const token = getTokenFromCookie();
+      try {
+        const response = await fetch(URLs.INDIVIDUAL_RESPONSE, {
+          method: "post",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ 'formId': id })
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+     
+          setIndividualResponses(data.data[0].formData);
+        
+        } else {
+          console.error(ToastMessages.FETCH_INDIVIDUAL_RESPONSES_FAILURE);
+        }
+      } catch (error) {
+        console.error(ToastMessages.FETCH_INDIVIDUAL_RESPONSES_ERROR, error);
+      }
+    }
+    if (type === "Individual") {
+      fetchIndividualResponses();
+    }
+  }, [id, type]);
 
   const downloadCSV = () => {
     const csvData = [];
@@ -103,6 +145,19 @@ const ResponsePage = () => {
     };
   };
 
+  const handleNextResponse = () => {
+    if (currentResponseIndex < individualResponses.length - 1) {
+      setCurrentResponseIndex(currentResponseIndex + 1);
+    }
+  };
+
+  const handlePreviousResponse = () => {
+    console.log(individualResponses[0]);
+    if (currentResponseIndex > 0) {
+      setCurrentResponseIndex(currentResponseIndex - 1);
+    }
+  };
+
   return (
     <div>
       <Header />
@@ -118,7 +173,7 @@ const ResponsePage = () => {
             <Group>
               <Button color='orange' variant={type === "Questions" ? 'filled' : 'outline'} onClick={() => { setType("Questions") }}>Questions</Button>
               <Button color='orange' variant={type === "Summary" ? 'filled' : 'outline'} onClick={() => { setType("Summary") }}>Summary</Button>
-              <Button color='orange' variant={type === "Settings" ? 'filled' : 'outline'} onClick={() => { setType("Settings") }}>Settings</Button>
+              <Button color='orange' variant={type === "Individual" ? 'filled' : 'outline'} onClick={() => { setType("Individual") }}>Individual</Button>
             </Group>
           </Container>
         </Flex>
@@ -129,7 +184,7 @@ const ResponsePage = () => {
         <Text>{DefaultTexts.LOADING}</Text>
       ) : (
         <>
-          {type === "Questions" && (
+          {type === typeTexts.questions && (
             responses.length === 0 ? (
               <Text>{DefaultTexts.NO_RESPONSES}</Text>
             ) : (
@@ -140,16 +195,43 @@ const ResponsePage = () => {
               ))
             )
           )}
-          {type === "Summary" && (
+          {type === typeTexts.summary && (
             responses.map((response, index) => (
               <div key={index}>
                 <BarChart data={getChartData(response)} />
               </div>
             ))
           )}
-          {type === "Settings" && (
-            <Text>Settings Content</Text>
-          )}
+          {type === typeTexts.individualType && (
+  individualResponses.length === 0 ? (
+    <Text>{DefaultTexts.NO_RESPONSES}</Text>
+  ) : (
+    <>
+      {individualResponses[currentResponseIndex].map((response, index) => (
+        <IndividualResponseCard 
+          key={response.title} 
+          title={response.title} 
+          answer={response.answer} 
+        />
+      ))}
+      <Group position="center" mt="md">
+        <Button 
+          onClick={handlePreviousResponse} 
+          disabled={currentResponseIndex === 0}
+        >
+          &lt; Previous
+        </Button>
+        <Button 
+          onClick={handleNextResponse} 
+          disabled={currentResponseIndex === individualResponses.length - 1}
+        >
+          Next &gt;
+        </Button>
+      </Group>
+    </>
+  )
+)}
+
         </>
       )}
     </div>

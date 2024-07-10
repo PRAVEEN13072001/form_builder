@@ -2,8 +2,7 @@ import React from 'react';
 import { Container, Paper, Text, Divider } from '@mantine/core';
 
 export default function ResponseCard({ title, responseJson }) {
-  console.log("ResponseCard rendered");
-  console.log(responseJson);
+
 
   return (
     <div>

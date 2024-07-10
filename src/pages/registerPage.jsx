@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Paper, TextInput, PasswordInput, Checkbox, Button, Title, Text, Group } from '@mantine/core';
 import { Link } from 'react-router-dom';
 import { ToastMessages, DefaultTexts } from "./messages/registerTexts";
+import {URLs} from "./messages/apiUrls";
 
 export default function AuthenticationImage() {
   const [email, setEmail] = useState('');
@@ -15,7 +16,7 @@ export default function AuthenticationImage() {
 
   const handleRegister = async () => {
     try {
-      const response = await fetch('http://localhost:5000/register', {
+      const response = await fetch(URLs.RESGISTER, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

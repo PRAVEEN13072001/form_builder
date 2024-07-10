@@ -30,7 +30,7 @@ export default function ResetPassword() {
       return;
     }
     try {
-      const response = await fetch('http://localhost:5000/reset-password', {
+      const response = await fetch(messages.API_URLS.RESET_PASSWORD, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -79,7 +79,7 @@ export default function ResetPassword() {
           onChange={(e) => setConfirmPassword(e.target.value)}
         />
         <Button fullWidth mt="lg" size="lg" onClick={handleSubmit}>
-          Reset Password
+          {messages.ResetPassword}
         </Button>
 
         <ToastContainer />

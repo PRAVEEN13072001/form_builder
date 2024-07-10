@@ -12,6 +12,8 @@ import surveyData from '../components/SurveyForm/templatesData';
 import { useNavigate } from 'react-router-dom';
 import { FooterCentered } from '../components/Footer';
 import { ToastMessages,TextMessages } from './messages/homeTexts';
+import { URLs } from './messages/apiUrls';
+
 
 export default function Home() {
   const Navigate = useNavigate();
@@ -57,7 +59,7 @@ const [recipientEmail, setRecipientEmail] = useState('');
 const fetchData = () => {
   const token = getTokenFromCookie();
   if (token) {
-    fetch(`http://localhost:5000/getForm`, {
+    fetch(URLs.GET_FORM, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -82,7 +84,7 @@ const fetchData = () => {
 const fetchTemplate = () => {
   const token = getTokenFromCookie();
   if (token) {
-    fetch('http://localhost:5000/getTemplates', {
+    fetch(URLs.GET_TEMPLATES, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -149,7 +151,7 @@ const handleDelete = async (id) => {
    const archiveForm = async (id) => {
     const token =getTokenFromCookie();
     if (token) {
-      await fetch(`http://localhost:5000/archiveForm`, {
+      await fetch(URLs.ARCHIVE_FORM, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -176,7 +178,7 @@ const handleDelete = async (id) => {
   const ArchiveOff=async(id)=>
   {const token =getTokenFromCookie();
     if (token) {
-      await fetch(`http://localhost:5000/ArchiveOff`, {
+      await fetch(URLs.ARCHIVE_OFF_FORM, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -220,7 +222,7 @@ const handleDelete = async (id) => {
     const handleRestore=async(id)=>
   {const token =getTokenFromCookie();
     if (token) {
-      await fetch(`http://localhost:5000/retriveForm`, {
+      await fetch(URLs.RETRIEVE_FORM, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -248,7 +250,7 @@ const handleDelete = async (id) => {
  const sendMail = async (email) => {
 
     try {
-      const response = await fetch(`http://localhost:5000/sendFormLinkMail`, {
+      const response = await fetch(URLs.SEND_FORM_LINK_MAIL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -328,10 +330,11 @@ const handleTemplateDelete = async (id) => {
   };
   const archiveTemplate = async (id) => {
 
+
   const token = getTokenFromCookie();
   if (token) {
     try {
-      const response = await fetch(`http://localhost:5000/archiveTemplate`, {
+      const response = await fetch(URLs.ARCHIVE_TEMPLATE, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -357,7 +360,7 @@ const archiveOffTemplate = async (id) => {
   const token = getTokenFromCookie();
   if (token) {
     try {
-      const response = await fetch(`http://localhost:5000/archiveOffTemplate`, {
+      const response = await fetch(URLs.ARCHIVE_OFF_FORM, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -383,7 +386,7 @@ const restoreTemplate = async (id) => {
   const token = getTokenFromCookie();
   if (token) {
     try {
-      const response = await fetch(`http://localhost:5000/restoreTemplate`, {
+      const response = await fetch(URLs.RESTORE_TEMPLATE, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,

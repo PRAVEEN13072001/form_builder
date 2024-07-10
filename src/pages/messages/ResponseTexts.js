@@ -11,3 +11,8 @@ export const DefaultTexts = {
   LOADING: 'Loading...',
   CSV_FILENAME: 'responses.csv',
 };
+export const typeTexts ={
+  individualType : "Individual",
+  summary :"Summary",
+  questions :"Questions"
+}
