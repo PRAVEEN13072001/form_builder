@@ -42,7 +42,7 @@ export default function App() {
       }
 
       const decryptedData = await response.json();
-      console.log('Decrypted ID:', decryptedData.decryptedId);
+     
       return decryptedData.decryptedId;
     } catch (error) {
       console.error('Error decrypting ID:', error);
@@ -73,7 +73,7 @@ export default function App() {
       }
 
       const formData = await response.json();
-      console.log(formData);
+     
       const isValid = await checkFormValidity(formData);
       
       if (!isValid && formData.type !== 'open') {
@@ -87,9 +87,10 @@ export default function App() {
   };
 
   const alertResults = useCallback(async (sender) => {
-    console.log(sender);
+    const ele=sender.jsonObj.pages[0].elements;
+    
     try {
-      console.log("Survey completed:", sender.data);
+      
 
       const searchParams = new URLSearchParams(location.search);
       const encryptedId = searchParams.get('id');
@@ -97,12 +98,27 @@ export default function App() {
 
       const token = getTokenFromCookie();
 
-      // Construct response data including question titles
+      // Construct response data including question titles and types
       const responseData = Object.keys(sender.data).map((questionName) => {
+         
         const question = sender.getQuestionByName(questionName);
+        if(question.getType()=='dropdown')
+        {
+           const questionData = ele.find(e=>e.name==questionName);
+          
+           const asnwer=questionData.choices.find(a=>a.value==sender.data[questionName]);
+          
+           return {
+          name: questionName,
+          title: question.title,
+          type: question.getType(), // Add question type
+          answer: asnwer.text
+        };
+        }
         return {
           name: questionName,
           title: question.title,
+          type: question.getType(), // Add question type
           answer: sender.data[questionName]
         };
       });
@@ -124,7 +140,7 @@ export default function App() {
       }
 
       const savedResponseData = await response.json();
-      console.log('Response saved:', savedResponseData);
+    
 
       // Show toast notification on successful save
       toast.success(MESSAGES.SAVE_RESPONSE_SUCCESS);

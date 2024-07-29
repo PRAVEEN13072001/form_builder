@@ -103,13 +103,12 @@ const fetchTemplate = () => {
             ...template,
             TemplateData: JSON.parse(template.TemplateData),
           }));
-          console.log("parsed");
-          console.log(parsedTemplate);
+        
 
           // Extract only the TemplateData from each parsedTemplate object
         
           setParsedTemplates(parsedTemplate);
-       console.log(parsedTemplate);
+     
          
         }
       })
@@ -206,10 +205,10 @@ const handleDelete = async (id) => {
   const handleSend =async(id)=>
     {
       const form = parsedForms.find(form => form.id === id); 
-      console.log(form);
+  
       if(form)
         {
-          console.log(form.formLink);
+          
           SetLink(form.formLink);
           open();
         }

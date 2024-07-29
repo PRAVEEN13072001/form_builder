@@ -148,9 +148,9 @@ export default function AuthenticationImage() {
           {DefaultTexts.LOGIN_BUTTON}
         </Button>
 
-        <Text ta="center" mt="md">
+        {/* <Text ta="center" mt="md">
           <Link to="/register">{DefaultTexts.REGISTER_PROMPT}</Link>
-        </Text>
+        </Text> */}
 
         <Text ta="center" mt="md">
           <span onClick={() => setModalOpened(true)} style={{ color: 'blue', cursor: 'pointer' }}>

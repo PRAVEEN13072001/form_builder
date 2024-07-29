@@ -80,6 +80,7 @@ export default function SurveyCreatorWidget() {
     try {
       const token = getCookie('token');
       const creatorJSON = JSON.parse(creator.text);
+      console.log(creatorJSON);
       const response = await fetch(apiEndpoints.formSave, {
         method: "POST",
         headers: {

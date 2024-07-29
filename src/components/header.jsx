@@ -13,6 +13,10 @@ const unauthLinks = [
 ];
 
 export default function HeaderSimple() {
+  const [profileEmail,setProfileEmail]=useState(''); 
+  const [profileDepartment,setProfileDepartment]=useState(''); 
+  const [profileVertical,setProfileVertical]=useState(''); 
+  const [profileJobTitle,setProfileJobTitle]=useState('');  
   function getTokenFromCookie() {
     const cookies = document.cookie.split(';');
     const tokenCookie = cookies.find(cookie => cookie.trim().startsWith('token='));
@@ -23,10 +27,38 @@ export default function HeaderSimple() {
     }
   }
 
+  const [profileInfo, setProfileInfo] = useState([]);
+  useEffect(() => {
+    const token = getTokenFromCookie();
+
+    if (token) {
+      fetch('http://localhost:5000/ProfileInfo', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then(response => response.json())
+        .then(data => {
+          console.log(data.organizations[0]);
+          setProfileDepartment(data.organizations[0].department);
+          setProfileEmail(data.primaryEmail);
+          setProfileVertical(data.organizations[0].costCenter);
+          setProfileJobTitle(data.organizations[0].title);
+          setProfileInfo(data);
+        })
+        .catch(error => {
+          console.error('Error fetching profile info:', error);
+        });
+    }
+  }, []);
+
   const navigate = useNavigate();
   const [userName, setUserName] = useState('');
   const [opened, { open, close }] = useDisclosure(false);
   const [changePasswordOpened, { open: openChangePassword, close: closeChangePassword }] = useDisclosure(false);
+  const [profileOpened, { open: openProfile, close: closeProfile }] = useDisclosure(false);
 
   useEffect(() => {
     const token = getTokenFromCookie();
@@ -41,7 +73,7 @@ export default function HeaderSimple() {
       })
         .then(response => response.json())
         .then(data => {
-          console.log(data);
+        
           if (data.user) {
             setUserName(data.user.userName || ''); // Set to empty string if userName is null
           }
@@ -118,7 +150,7 @@ export default function HeaderSimple() {
           }
         })
         .catch(error => {
-           toast.error('Error adding username and password');
+          toast.error('Error adding username and password');
           console.error('Error adding username and password:', error);
         });
     }
@@ -185,7 +217,7 @@ export default function HeaderSimple() {
             // Optionally, update state or show success message
             toast.success('Password changed successfully');
           } else {
-           toast.error('Failed to change password');
+            toast.error('Failed to change password');
             console.error(data.error);
           }
         })
@@ -201,7 +233,7 @@ export default function HeaderSimple() {
   };
 
   const links = [
-    { link: '', label: `Welcome ${userName ? userName : ''}` }, // Adjust label based on userName
+    { link: openProfile, label: 'Profile' }, // New profile link
     { link: userName ? openChangePassword : open, label: userName ? 'Change Password' : 'Create Username and Password' },
     { link: handleMenuClick, label: 'Logout' },
   ];
@@ -304,6 +336,16 @@ export default function HeaderSimple() {
             Submit
           </Button>
         </form>
+      </Modal>
+
+      <Modal opened={profileOpened} onClose={closeProfile} title="Profile Information" centered>
+        <div>
+          <p>Email: {profileEmail || ''}</p>
+          <p>Employee ID: {profileInfo.id || ''}</p>
+          <p>Vertical: {profileVertical|| ''}</p>
+          <p>Department: {profileDepartment || ''}</p>
+          <p>Job Title: {profileJobTitle || ''}</p>
+        </div>
       </Modal>
     </div>
   );

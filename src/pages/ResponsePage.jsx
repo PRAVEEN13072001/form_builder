@@ -5,11 +5,10 @@ import Header from '../components/header';
 import { IconFileSpreadsheet } from '@tabler/icons-react';
 import { useLocation } from "react-router-dom";
 import { saveAs } from 'file-saver';
-import { ToastMessages, DefaultTexts,typeTexts } from "./messages/ResponseTexts";
+import { ToastMessages, DefaultTexts, typeTexts } from "./messages/ResponseTexts";
 import BarChart from "../components/bar"; // Adjust the import path as needed
 import IndividualResponseCard from "../components/ResponsePage/IndividualResponseCard";
 import { URLs } from './messages/apiUrls';
-
 
 const ResponsePage = () => {
   const [responses, setResponses] = useState([]);
@@ -46,8 +45,7 @@ const ResponsePage = () => {
         if (response.ok) {
           const data = await response.json();
           const val = data.data;
-          
-
+              
           const groupedResponses = [];
           const values = Object.values(val);
           values.forEach(subArray => {
@@ -56,10 +54,11 @@ const ResponsePage = () => {
               if (existingResponse) {
                 existingResponse.answers.push(item.answer);
               } else {
-                groupedResponses.push({ name: item.name, title: item.title, answers: [item.answer] });
+                groupedResponses.push({ name: item.name, title: item.title, answers: [item.answer], type :item.type });
               }
             });
           });
+       
           setResponses(groupedResponses);
           setIsLoading(false);
         } else {
@@ -72,7 +71,7 @@ const ResponsePage = () => {
     fetchResponses();
   }, [id]);
 
-   useEffect(() => {
+  useEffect(() => {
     async function fetchIndividualResponses() {
       function getTokenFromCookie() {
         const cookies = document.cookie.split(';');
@@ -96,9 +95,7 @@ const ResponsePage = () => {
 
         if (response.ok) {
           const data = await response.json();
-     
           setIndividualResponses(data.data[0].formData);
-        
         } else {
           console.error(ToastMessages.FETCH_INDIVIDUAL_RESPONSES_FAILURE);
         }
@@ -113,14 +110,15 @@ const ResponsePage = () => {
 
   const downloadCSV = () => {
     const csvData = [];
-    const headers = ['Question Title', 'Answer'];
+    const headers = responses.map(response => response.title);
     csvData.push(headers.join(','));
 
-    responses.forEach(response => {
-      response.answers.forEach(answer => {
-        csvData.push(`${response.title},${answer}`);
-      });
-    });
+    const maxAnswers = Math.max(...responses.map(response => response.answers.length));
+
+    for (let i = 0; i < maxAnswers; i++) {
+      const row = responses.map(response => response.answers[i] || '');
+      csvData.push(row.join(','));
+    }
 
     const csvContent = csvData.join('\n');
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8' });
@@ -128,9 +126,12 @@ const ResponsePage = () => {
   };
 
   const getChartData = (response) => {
+    
     const answerCounts = {};
     response.answers.forEach(answer => {
-      answerCounts[answer] = (answerCounts[answer] || 0) + 1;
+      if (answer.split(' ').length <= 2) {
+        answerCounts[answer] = (answerCounts[answer] || 0) + 1;
+      }
     });
 
     return {
@@ -152,7 +153,7 @@ const ResponsePage = () => {
   };
 
   const handlePreviousResponse = () => {
-    console.log(individualResponses[0]);
+   
     if (currentResponseIndex > 0) {
       setCurrentResponseIndex(currentResponseIndex - 1);
     }
@@ -167,13 +168,13 @@ const ResponsePage = () => {
             <h4>{isLoading ? DefaultTexts.LOADING_RESPONSES : DefaultTexts.RESPONSES}</h4>
           </Container>
           <Container>
-            <ActionIcon variant="filled" ml={'md'} size={'lg'} color='green' onClick={downloadCSV}>
-              <IconFileSpreadsheet style={{ width: '70%', height: '70%' }} stroke={1.5} />
-            </ActionIcon>
             <Group>
               <Button color='orange' variant={type === "Questions" ? 'filled' : 'outline'} onClick={() => { setType("Questions") }}>Questions</Button>
               <Button color='orange' variant={type === "Summary" ? 'filled' : 'outline'} onClick={() => { setType("Summary") }}>Summary</Button>
               <Button color='orange' variant={type === "Individual" ? 'filled' : 'outline'} onClick={() => { setType("Individual") }}>Individual</Button>
+              <ActionIcon variant="filled" ml={'md'} size={'lg'} color='green' onClick={downloadCSV}>
+              <IconFileSpreadsheet style={{ width: '70%', height: '70%' }} stroke={1.5} />
+            </ActionIcon>
             </Group>
           </Container>
         </Flex>
@@ -198,40 +199,39 @@ const ResponsePage = () => {
           {type === typeTexts.summary && (
             responses.map((response, index) => (
               <div key={index}>
-                <BarChart data={getChartData(response)} />
+                <BarChart data={getChartData(response)} flag ={response.type ==='dropdown'}/>
               </div>
             ))
           )}
           {type === typeTexts.individualType && (
-  individualResponses.length === 0 ? (
-    <Text>{DefaultTexts.NO_RESPONSES}</Text>
-  ) : (
-    <>
-      {individualResponses[currentResponseIndex].map((response, index) => (
-        <IndividualResponseCard 
-          key={response.title} 
-          title={response.title} 
-          answer={response.answer} 
-        />
-      ))}
-      <Group position="center" mt="md">
-        <Button 
-          onClick={handlePreviousResponse} 
-          disabled={currentResponseIndex === 0}
-        >
-          &lt; Previous
-        </Button>
-        <Button 
-          onClick={handleNextResponse} 
-          disabled={currentResponseIndex === individualResponses.length - 1}
-        >
-          Next &gt;
-        </Button>
-      </Group>
-    </>
-  )
-)}
-
+            individualResponses.length === 0 ? (
+              <Text>{DefaultTexts.NO_RESPONSES}</Text>
+            ) : (
+              <>
+                {individualResponses[currentResponseIndex].map((response, index) => (
+                  <IndividualResponseCard 
+                    key={response.title} 
+                    title={response.title} 
+                    answer={response.answer} 
+                  />
+                ))}
+                <Group position="center" mt="md">
+                  <Button 
+                    onClick={handlePreviousResponse} 
+                    disabled={currentResponseIndex === 0}
+                  >
+                    &lt; Previous
+                  </Button>
+                  <Button 
+                    onClick={handleNextResponse} 
+                    disabled={currentResponseIndex === individualResponses.length - 1}
+                  >
+                    Next &gt;
+                  </Button>
+                </Group>
+              </>
+            )
+          )}
         </>
       )}
     </div>
