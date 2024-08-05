@@ -41,7 +41,7 @@ export default function HeaderSimple() {
       })
         .then(response => response.json())
         .then(data => {
-          console.log(data.organizations[0]);
+         
           setProfileDepartment(data.organizations[0].department);
           setProfileEmail(data.primaryEmail);
           setProfileVertical(data.organizations[0].costCenter);

@@ -89,6 +89,7 @@ export default function App() {
   const alertResults = useCallback(async (sender) => {
     const ele=sender.jsonObj.pages[0].elements;
     
+    
     try {
       
 
@@ -99,29 +100,61 @@ export default function App() {
       const token = getTokenFromCookie();
 
       // Construct response data including question titles and types
-      const responseData = Object.keys(sender.data).map((questionName) => {
-         
-        const question = sender.getQuestionByName(questionName);
-        if(question.getType()=='dropdown')
-        {
-           const questionData = ele.find(e=>e.name==questionName);
-          
-           const asnwer=questionData.choices.find(a=>a.value==sender.data[questionName]);
-          
-           return {
-          name: questionName,
-          title: question.title,
-          type: question.getType(), // Add question type
-          answer: asnwer.text
-        };
-        }
+    const responseData = Object.keys(sender.data).map((questionName) => {
+    const question = sender.getQuestionByName(questionName);
+
+    if (question.getType() === 'boolean') {
+        // Get the boolean value
+        const answer = sender.data[questionName];
+
+        // Convert boolean to "yes" or "no"
         return {
-          name: questionName,
-          title: question.title,
-          type: question.getType(), // Add question type
-          answer: sender.data[questionName]
+            name: questionName,
+            title: question.title,
+            type: question.getType(), // Add question type
+            answer: answer ? 'yes' : 'no'
         };
-      });
+    }
+ if (question.getType() === 'ranking') {
+    const questionData = ele.find(e => e.name === questionName);
+    
+
+    // Assuming sender.data[questionName] is an array of values representing the ranking order
+    const answer = sender.data[questionName].map(value => {
+        const choice = questionData.choices.find(a => a.value === value);
+        return choice ? choice.text : 'Unknown'; // Handle unknown choices
+    }).join(', '); // Join the text values with commas
+
+
+    return {
+        name: questionName,
+        title: question.title,
+        type: question.getType(), // Add question type
+        answer: answer
+    };
+}
+
+
+    if (question.getType() === 'dropdown' ) {
+        const questionData = ele.find(e => e.name === questionName);
+        const answer = questionData.choices.find(a => a.value === sender.data[questionName]);
+
+        return {
+            name: questionName,
+            title: question.title,
+            type: question.getType(), // Add question type
+            answer: answer.text
+        };
+    }
+
+    return {
+        name: questionName,
+        title: question.title,
+        type: question.getType(), // Add question type
+        answer: sender.data[questionName]
+    };
+});
+
 
       const response = await fetch(API_URLS.RESPONSE_SAVE, {
         method: 'POST',
@@ -140,8 +173,6 @@ export default function App() {
       }
 
       const savedResponseData = await response.json();
-    
-
       // Show toast notification on successful save
       toast.success(MESSAGES.SAVE_RESPONSE_SUCCESS);
 

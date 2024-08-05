@@ -36,7 +36,8 @@
     "react-toastify": "^10.0.5",
     "survey-creator-react": "^1.10.4",
     "survey-react-ui": "^1.10.4",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "xlsx": "^0.18.5"
   },
   "scripts": {
     "start": "react-scripts start",
