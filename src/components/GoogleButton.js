@@ -44,7 +44,7 @@ export default function GoogleButton(props) {
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(auth, provider)
       const token = await result.user.getIdToken();
-      console.log(process.env.REACT_APP_API_BASE_URL);
+
       const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/auth/google`, {
         method: "POST",
         headers: {
