@@ -15,7 +15,7 @@ import {
 ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Title, Tooltip, Legend);
 
 const ChartComponent = ({ data, flag }) => {
-  console.log(flag);
+  
   const [showBarChart, setShowBarChart] = useState(!flag);
 
   const toggleChart = () => {

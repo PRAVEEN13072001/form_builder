@@ -1,7 +1,6 @@
-// config.js
+export const FETCH_TEMPLATE_URL = `${process.env.REACT_APP_API_BASE_URL}/getTemplates`;
+export const SAVE_TEMPLATE_URL = `${process.env.REACT_APP_API_BASE_URL}/templateSave`;
 
-export const FETCH_TEMPLATE_URL = 'http://localhost:5000/getTemplates';
-export const SAVE_TEMPLATE_URL = 'http://localhost:5000/templateSave';
 export const SUCCESS_MESSAGE = "Your template has been saved successfully!";
 export const ERROR_MESSAGE_FETCH = "An error occurred while fetching the survey data.";
 export const ERROR_MESSAGE_SAVE = "An error occurred while saving the template data.";

@@ -4,7 +4,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useEffect, useState } from "react";
 import { Modal, Button, Select, TextInput } from '@mantine/core';
 import { useNavigate } from "react-router-dom";
-import { creatorOptions, defaultJson, apiEndpoints, messages, formTypes } from './messages.js/BuilderTexts';
+import { creatorOptions, defaultJson, apiEndpoints, messages, formTypes } from '../messages.js/BuilderTexts';
 
 function getCookie(name) {
   const value = `; ${document.cookie}`;
@@ -80,7 +80,7 @@ export default function SurveyCreatorWidget() {
     try {
       const token = getCookie('token');
       const creatorJSON = JSON.parse(creator.text);
-      console.log(creatorJSON);
+    
       const response = await fetch(apiEndpoints.formSave, {
         method: "POST",
         headers: {
@@ -154,7 +154,7 @@ export default function SurveyCreatorWidget() {
           onChange={setType}
         />
         {(type === "one-time" || type === "recurring") && (
-          <>
+          <div>
             <TextInput
               label="Start Date"
               type="date"
@@ -167,7 +167,7 @@ export default function SurveyCreatorWidget() {
               value={endDate}
               onChange={(e) => setEndDate(e.currentTarget.value)}
             />
-          </>
+          </div>
         )}
         <Button onClick={handleSubmitModal}>Submit</Button>
       </Modal>

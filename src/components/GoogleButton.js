@@ -44,9 +44,8 @@ export default function GoogleButton(props) {
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(auth, provider)
       const token = await result.user.getIdToken();
-
-      // Send token to your Node.js server
-      const response = await fetch("http://localhost:5000/auth/google", {
+      console.log(process.env.REACT_APP_API_BASE_URL);
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/auth/google`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -54,7 +53,7 @@ export default function GoogleButton(props) {
         credentials: "include",
         body: JSON.stringify({ token }),
       });
-        console.log(response);
+      
       if (response.status==200) {
          window.location.href ='/';
         setUser("success");

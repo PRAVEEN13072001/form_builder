@@ -13,15 +13,16 @@ import {
 } from '@mantine/core';
 import ResponseCard from '../components/ResponsePage/ResponseCard';
 import Header from '../components/header';
-import { IconFileSpreadsheet, IconDownload, IconEye } from '@tabler/icons-react';
+import { IconFileSpreadsheet, IconDownload, IconEye,IconArrowLeft } from '@tabler/icons-react';
 import { useLocation } from 'react-router-dom';
 import { saveAs } from 'file-saver';
 import { ToastMessages, DefaultTexts, typeTexts } from './messages/ResponseTexts';
 import BarChart from '../components/bar'; // Adjust the import path as needed
 import IndividualResponseCard from '../components/ResponsePage/IndividualResponseCard';
 import { URLs } from './messages/apiUrls';
+import { useNavigate } from 'react-router-dom';
 
-const ResponsePage = () => {
+const ResponsePage = () => {  const navigate = useNavigate();
   const [responses, setResponses] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [individualResponses, setIndividualResponses] = useState([]);
@@ -34,6 +35,7 @@ const ResponsePage = () => {
   const id = params.get('formId');
 
   useEffect(() => {
+     
     async function fetchResponses() {
       function getTokenFromCookie() {
         const cookies = document.cookie.split(';');
@@ -58,7 +60,7 @@ const ResponsePage = () => {
         if (response.ok) {
           const data = await response.json();
           const val = data.data;
-         console.log(val);
+         
           const groupedResponses = [];
           const values = Object.values(val);
           values.forEach((subArray) => {
@@ -151,8 +153,7 @@ const ResponsePage = () => {
     }
 
     const csvContent = csvData.join('\n');
-    setCsvContent(csvContent);
-    setIsModalOpen(true);
+    navigate(`/csv-table?formId=${id}`, { state: { csvContent } });
   };
 
   const getChartData = (response) => {
@@ -216,11 +217,19 @@ const ResponsePage = () => {
     );
   };
 
-  return (
+ return (
     <div>
       <Header />
       <Container fluid p={20} bg={'#e6e6e6'}>
-        <Flex direction="row" justify={'center'} align={'center'} wrap={'nowrap'}>
+        <Flex direction="row" justify={'space-between'} align={'center'} wrap={'nowrap'}>
+          <Button
+            variant="subtle"
+            leftIcon={<IconArrowLeft />}
+            onClick={() => navigate("/")}
+            color="dark"
+          >
+            Back
+          </Button>
           <Container>
             <h4>{isLoading ? DefaultTexts.LOADING_RESPONSES : DefaultTexts.RESPONSES}</h4>
           </Container>
@@ -245,8 +254,8 @@ const ResponsePage = () => {
                   <Menu.Item icon={<IconDownload size={14} />} onClick={downloadCSV}>
                     Download CSV
                   </Menu.Item>
-                  <Menu.Item icon={<IconEye size={14} />} onClick={viewInWeb}>
-                    View
+                  <Menu.Item icon={<IconDownload size={14} />} onClick={viewInWeb}>
+                   view
                   </Menu.Item>
                 </Menu.Dropdown>
               </Menu>
@@ -258,14 +267,14 @@ const ResponsePage = () => {
       {isLoading ? (
         <Text>{DefaultTexts.LOADING}</Text>
       ) : (
-        <>
+        <div>
           {type === typeTexts.questions && (
             responses.length === 0 ? (
               <Text>{DefaultTexts.NO_RESPONSES}</Text>
             ) : (
               responses.map((response, index) => (
                 <div key={index}>
-                  <ResponseCard title={response.title} responseJson={[response.answers]} />
+                  <ResponseCard key ={index} title={response.title} responseJson={[response.answers]} />
                 </div>
               ))
             )
@@ -273,7 +282,7 @@ const ResponsePage = () => {
           {type === typeTexts.summary && (
             responses.map((response, index) => (
               <div key={index}>
-                <BarChart data={getChartData(response)} flag={response.type === 'dropdown'} />
+                <BarChart  key ={index} data={getChartData(response)} flag={response.type === 'dropdown'} />
               </div>
             ))
           )}
@@ -281,7 +290,7 @@ const ResponsePage = () => {
             individualResponses.length === 0 ? (
               <Text>{DefaultTexts.NO_RESPONSES}</Text>
             ) : (
-              <>
+              <div>
                 {individualResponses[currentResponseIndex].map((response, index) => (
                   <IndividualResponseCard 
                     key={index} 
@@ -303,19 +312,11 @@ const ResponsePage = () => {
                     Next &gt;
                   </Button>
                 </Group>
-              </>
+              </div>
             )
           )}
-        </>
+        </div>
       )}
-      <Modal
-        opened={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        title="CSV Content"
-        size="xl"
-      >
-        {renderCSVTable()}
-      </Modal>
     </div>
   );
 };

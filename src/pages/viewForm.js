@@ -74,7 +74,7 @@ export default function SurveyCreatorWidget() {
       };
 
       const token = getTokenFromCookie();
-      console.log(token);
+    
 
       try {
         let template = null;
@@ -91,7 +91,7 @@ export default function SurveyCreatorWidget() {
           if (templateResponse.ok) {
             template = await templateResponse.json();
             setTemplateData(template.templateData);
-            console.log(template);
+           
           } else {
             console.error('Failed to fetch template data');
           }
@@ -113,7 +113,7 @@ export default function SurveyCreatorWidget() {
 
           if (formDataResponse.ok) {
             const data = await formDataResponse.json();
-            console.log('Form Data:', data);
+          
             const surveyCreator = new SurveyCreator({ showLogicTab: true, isAutoSave: true });
             surveyCreator.text = data.formData;
             setLoad(true);
@@ -213,7 +213,7 @@ export default function SurveyCreatorWidget() {
         toast.success(messages.saveFormLinkSuccessMessage);
         let res = await response.json();
         if (!isDraft) {
-          console.log('dasd');
+        
           updateLink(res.savedFormData.id);
         }
       } else {
@@ -278,7 +278,7 @@ export default function SurveyCreatorWidget() {
   return (
     <div>
       {load && formData && creator ? (
-        <>
+        <div>
           <SurveyCreatorComponent creator={creator} />
           <Button onClick={handleSaveButtonClick} style={{ marginRight: '10px' }}>
             Save as draft
@@ -302,7 +302,7 @@ export default function SurveyCreatorWidget() {
               onChange={(value) => setType(value)}
             />
             {(type === 'one-time' || type === 'recurring') && (
-              <>
+              <d>
                 <TextInput
                   label="Start Date"
                   type="date"
@@ -317,7 +317,7 @@ export default function SurveyCreatorWidget() {
                   onChange={(event) => setEndDate(event.currentTarget.value)}
                   style={{ marginBottom: '10px' }}
                 />
-              </>
+              </d>
             )}
             <Button onClick={handleSubmitModal} style={{ marginRight: '10px' }}>
               Submit
@@ -327,7 +327,7 @@ export default function SurveyCreatorWidget() {
             </Button>
           </Modal>
           <ToastContainer />
-        </>
+        </div>
       ) : (
         <p>Loading...</p>
       )}

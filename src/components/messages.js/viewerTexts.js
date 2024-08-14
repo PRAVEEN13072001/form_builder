@@ -1,9 +1,7 @@
-// config.js
-
 export const API_URLS = {
-  DECRYPT_ID: 'http://localhost:5000/decryptId',
-  ARRAY_FORM: 'http://localhost:5000/ArrayForm',
-  RESPONSE_SAVE: 'http://localhost:5000/ResponseSave'
+  DECRYPT_ID: `${process.env.REACT_APP_API_BASE_URL}/decryptId`,
+  ARRAY_FORM: `${process.env.REACT_APP_API_BASE_URL}/ArrayForm`,
+  RESPONSE_SAVE: `${process.env.REACT_APP_API_BASE_URL}/ResponseSave`
 };
 
 export const MESSAGES = {

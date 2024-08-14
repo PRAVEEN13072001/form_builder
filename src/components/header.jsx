@@ -32,7 +32,7 @@ export default function HeaderSimple() {
     const token = getTokenFromCookie();
 
     if (token) {
-      fetch('http://localhost:5000/ProfileInfo', {
+      fetch(`${process.env.REACT_APP_API_BASE_URL}/ProfileInfo`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -64,7 +64,7 @@ export default function HeaderSimple() {
     const token = getTokenFromCookie();
 
     if (token) {
-      fetch('http://localhost:5000/getUser', {
+      fetch(`${process.env.REACT_APP_API_BASE_URL}/getUser`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -130,7 +130,7 @@ export default function HeaderSimple() {
     // Proceed with form submission logic (API calls, etc.)
     const token = getTokenFromCookie();
     if (token) {
-      fetch('http://localhost:5000/addUserNameAndPassword', {
+     fetch(`${process.env.REACT_APP_API_BASE_URL}/addUserNameAndPassword`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -202,7 +202,7 @@ export default function HeaderSimple() {
     // Proceed with form submission logic (API calls, etc.)
     const token = getTokenFromCookie();
     if (token) {
-      fetch('http://localhost:5000/changePassword', {
+      fetch(`${process.env.REACT_APP_API_BASE_URL}/changePassword`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -239,7 +239,8 @@ export default function HeaderSimple() {
   ];
 
   return (
-    <div style={{ margin: '0', padding: '0' }}>
+    <div>
+      <div style={{ margin: '0', padding: '0' }}>
       <Container m={0} p={0} h={70} bg={'white'} size={'xl'} fluid styles={{
         root: {
           borderBottom: '1px solid black'
@@ -348,5 +349,7 @@ export default function HeaderSimple() {
         </div>
       </Modal>
     </div>
+    </div>
+    
   );
 }

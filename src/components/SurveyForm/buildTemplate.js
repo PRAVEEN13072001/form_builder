@@ -15,7 +15,7 @@ import {
   ERROR_NO_TOKEN,
   ERROR_FETCH_FAIL,
   ERROR_SAVE_FAIL
-} from './messages.js/buildTemplateTexts'; // Importing constants from config.js
+} from '../messages.js/buildTemplateTexts'; // Importing constants from config.js
 
 // Function to get survey by title from local surveyData
 function getSurveyByTitle(formName) {

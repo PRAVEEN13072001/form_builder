@@ -5,7 +5,7 @@ let [loading,setLoading]=useState(true)
 
   return (
     <div>
-      {loading ? <>Loading....</>:children}
+      {loading ? <div>Loading....</div>:children}
     </div>
   )
 }

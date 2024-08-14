@@ -4,7 +4,7 @@ import { Survey, Model } from 'survey-react-ui';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Modal from './Modal'; // Import the Modal component
-import { API_URLS, MESSAGES } from './messages.js/viewerTexts'; // Import constants and messages from config.js
+import { API_URLS, MESSAGES } from '../messages.js/viewerTexts'; // Import constants and messages from config.js
 
 export default function App() {
   const [formArray, setFormArray] = useState(null);
@@ -137,13 +137,14 @@ export default function App() {
 
     if (question.getType() === 'dropdown' ) {
         const questionData = ele.find(e => e.name === questionName);
+       
         const answer = questionData.choices.find(a => a.value === sender.data[questionName]);
-
+    
         return {
             name: questionName,
             title: question.title,
             type: question.getType(), // Add question type
-            answer: answer.text
+            answer: answer? answer.text : sender.data[questionName]
         };
     }
 

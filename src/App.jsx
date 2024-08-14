@@ -15,6 +15,7 @@ import ForgotPassword from './pages/forgotPassword';
 import ViewForm from './pages/viewForm';
 import ResponsePage from "./pages/ResponsePage";
 import TemplateCreate from "./components/SurveyForm/TemplateCreate";
+import CsvTablePage from "./pages/CsvTablePage";
 
 function getTokenFromCookie() {
   const cookies = document.cookie.split(';');
@@ -29,14 +30,15 @@ function ProtectedRoute({ element }) {
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <div>
+      <BrowserRouter>
       <MantineProvider>
         <UserProvider>
           <Routes>
+             <Route path="/csv-table" element={<ProtectedRoute element={<CsvTablePage />} />} />
             <Route path="/login" element={<Layout />} />
             <Route path="/register" element={<Register />} />
             <Route path="/forgotPassword" element={<ForgotPassword />} />
-
             <Route path="/" element={<ProtectedRoute element={<Home />} />} />
             <Route path="/build" element={<ProtectedRoute element={<Builder />} />} />
             <Route path="/forms" element={<ProtectedRoute element={<Viewer />} />} />
@@ -48,6 +50,8 @@ export default function App() {
         </UserProvider>
       </MantineProvider>
     </BrowserRouter>
+    </div>
+    
   );
 }
 

@@ -1,7 +1,5 @@
-
-
-export const FETCH_TEMPLATE_URL = 'http://localhost:5000/getTemplates';
-export const SAVE_TEMPLATE_URL = 'http://localhost:5000/templateSave';
+export const FETCH_TEMPLATE_URL = `${process.env.REACT_APP_API_BASE_URL}/getTemplates`;
+export const SAVE_TEMPLATE_URL = `${process.env.REACT_APP_API_BASE_URL}/templateSave`;
 
 export const MESSAGES = {
   SUCCESS_SAVE: "Your template has been saved successfully!",

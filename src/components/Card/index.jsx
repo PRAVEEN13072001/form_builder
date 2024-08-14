@@ -8,7 +8,7 @@ export default function FormCard({ formName, formDescription, id, onDelete, onAr
   const navigate = useNavigate();
 
   async function handleExternalLink() {
-    console.log(TemplateForm);
+    
     if (TemplateForm) {
       navigate(`/viewForm?TemplateId=${id}`);
     } else if (Template) {
@@ -32,7 +32,8 @@ export default function FormCard({ formName, formDescription, id, onDelete, onAr
   const responsesTooltip = "Responses";
 
   return (
-    <Card
+    <div>
+      <Card
       shadow="sm"
       padding="xl"
       m="xs"
@@ -160,5 +161,6 @@ export default function FormCard({ formName, formDescription, id, onDelete, onAr
         )}
       </SimpleGrid>
     </Card>
+    </div>
   );
 }

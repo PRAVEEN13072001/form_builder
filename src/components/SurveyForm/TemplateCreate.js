@@ -4,7 +4,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useEffect, useState } from "react";
 import { Modal, Button, TextInput } from '@mantine/core';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate from react-router-dom
-import { SAVE_TEMPLATE_URL, MESSAGES } from './messages.js/templateCreateTexts'; // Import constants and messages from config.js
+import { SAVE_TEMPLATE_URL, MESSAGES } from '../messages.js/templateCreateTexts'; // Import constants and messages from config.js
 
 const creatorOptions = {
   showLogicTab: true,

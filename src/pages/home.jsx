@@ -123,7 +123,7 @@ const fetchTemplate = () => {
 const handleDelete = async (id) => {
   const token = getTokenFromCookie();
   const endpoint = navItem === 'Trash' ? 'permenantdeleteForm' : 'deleteForm';
-  const url = `http://localhost:5000/${endpoint}`;
+  const url = `${process.env.REACT_APP_API_BASE_URL}/${endpoint}`;
   if (token) {
     await fetch(url, {
       method: 'POST',
@@ -302,7 +302,7 @@ const handleDelete = async (id) => {
 const handleTemplateDelete = async (id) => {
   const token = getTokenFromCookie();
    const endpoint = navItem === 'Trash' ? 'PermenantDeleteTemplate' : 'DeleteTemplate';
-     const url = `http://localhost:5000/${endpoint}`;
+     const url = `${process.env.REACT_APP_API_BASE_URL}/${endpoint}`;
     if (token) {
       await fetch(url, {
         method: 'POST',
@@ -425,14 +425,34 @@ const restoreTemplate = async (id) => {
             }} >
               <Text fw={700}>{TextMessages.trashWarning}</Text>
            </Container>)}
-         {navItem == "My Forms" && <Container pos={'absolute'} right={'0'} fluid size={'xl'} m={'xs'} p={'0'}>
-               <Group>
-                <Button color='orange' variant={type=="All"?'filled':'outline'} onClick={()=>{setType("All")}}>All</Button>
-                <Button color='orange' variant={type=="Draft"?'filled':'outline'} onClick={()=>{setType("Draft")}}>Draft</Button>
-                <Button color='orange' variant={type=="Saved"?'filled':'outline'} onClick={()=>{setType("Saved")}}>Saved</Button>
-              </Group>
-             </Container>}
-             {navItem == "Templates" && <Container pos={'absolute'} right={'0'} fluid size={'xl'} m={'xs'} p={'0'}>
+         {navItem == "My Forms" && (
+  <Container
+    pos={'fixed'}  // Use 'fixed' or 'absolute' to fix its position
+    top={'70px'}  // Adjust the top positioning as per your layout
+    right={'20px'}  // Align to the right, adjust as needed
+    fluid
+    size={'xl'}
+    m={'xs'}
+    p={'0'}
+    style={{ zIndex: 1000 }}  // Ensure it stays on top
+  >
+    <Group>
+      <Button color='orange' variant={type == "All" ? 'filled' : 'outline'} onClick={() => { setType("All") }}>All</Button>
+      <Button color='orange' variant={type == "Draft" ? 'filled' : 'outline'} onClick={() => { setType("Draft") }}>Draft</Button>
+      <Button color='orange' variant={type == "Saved" ? 'filled' : 'outline'} onClick={() => { setType("Saved") }}>Saved</Button>
+    </Group>
+  </Container>
+)}
+
+             {navItem == "Templates" && <Container
+              pos={'fixed'}  // Use 'fixed' or 'absolute' to fix its position
+    top={'70px'}  // Adjust the top positioning as per your layout
+    right={'20px'}  // Align to the right, adjust as needed
+    fluid
+    size={'xl'}
+    m={'xs'}
+    p={'0'}
+    style={{ zIndex: 1000 }}>
                <Group>
                 <Button color='orange' variant={type=="All"?'filled':'outline'} onClick={()=>{setType("All")}}>All</Button>
                 <Button color='orange' variant={type=="Draft"?'filled':'outline'} onClick={()=>{setType("Draft")}}>Draft</Button>
@@ -523,7 +543,7 @@ const restoreTemplate = async (id) => {
 )}
 
        {navItem === 'Templates' && (
-    <>
+    <div>
             {parsedTemplates.map(template => (
                 !template.isTrash && !template.isArchive && (
                     <Container pos={'relative'} mt={'50'} key={template.id}>
@@ -567,10 +587,10 @@ const restoreTemplate = async (id) => {
                     </Container>
                 )
             ))}
-        </>
+        </div>
     )}
 {navItem === 'Trash' && (
-  <>
+  <div>
     {parsedForms.map(form => (
       form.isTrash && (
         <FormCard
@@ -600,7 +620,7 @@ const restoreTemplate = async (id) => {
         />
       )
     ))}
-  </>
+  </div>
 )}
           </Flex>
         </ScrollArea>

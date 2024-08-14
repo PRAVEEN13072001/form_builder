@@ -25,7 +25,7 @@ export default function AuthenticationImage() {
       });
 
       if (response.ok) {
-        console.log(ToastMessages.REGISTRATION_SUCCESS);
+        
         window.location.href = '/login';
       } else {
         console.error(ToastMessages.REGISTRATION_FAILURE);

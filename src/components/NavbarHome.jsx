@@ -21,13 +21,14 @@ export default function Navbar({setnavItem,setTemplateOpen}) {
     setActive(item.label);
     setnavItem(item.label);
     if (item.link) {
-      console.log("Navigating to:", item.link);
+   
       navigate(item.link);
     }
   };
 
   return (
-    <aside style={{ width: isCollapse ? '5vw' : '20vw', height: '90.1vh', backgroundColor: '#f7f6f5',borderRight:'1px solid black' }}>
+    <div>
+      <aside style={{ width: isCollapse ? '5vw' : '20vw', height: '90.1vh', backgroundColor: '#f7f6f5',borderRight:'1px solid black' }}>
       <nav style={{ padding: '0px' }}>
         <Container size={'xl'} h={'40'} mr={'0'} ml={'0'} fluid styles={{
           root: {
@@ -46,7 +47,7 @@ export default function Navbar({setnavItem,setTemplateOpen}) {
               
               
             >
-            {isCollapse ? <></> : <span>Welcome </span>}
+            {isCollapse ? <div></div> : <span>Welcome </span>}
              <Tooltip label="Collapse Navbar" position="top" withArrow>
             <ActionIcon mt={'2'} variant="outline" size={'lg'} color='black' onClick={()=>{ setIsCollapse(!isCollapse)}}>
               {isCollapse ? <IconArrowRight style={{ width: '70%', height: '70%' }} stroke={1.5} />:<IconArrowLeft style={{ width: '70%', height: '70%' }} stroke={1.5} />}
@@ -86,13 +87,14 @@ export default function Navbar({setnavItem,setTemplateOpen}) {
               
             >
               <item.icon style={{ marginRight: '10px' }} stroke={1.5} />
-              {isCollapse ? <></>:<span>{item.label}</span>}
+              {isCollapse ? <div></div>:<span>{item.label}</span>}
             </a>
               </Container>
           ))}
         </div>
-        
       </nav>
     </aside>
+    </div>
+    
   );
 }
