@@ -16,6 +16,7 @@ import ViewForm from './pages/viewForm';
 import ResponsePage from "./pages/ResponsePage";
 import TemplateCreate from "./components/SurveyForm/TemplateCreate";
 import CsvTablePage from "./pages/CsvTablePage";
+import NoResponsePage from "./pages/NoResponsePage";
 
 function getTokenFromCookie() {
   const cookies = document.cookie.split(';');
@@ -37,6 +38,7 @@ export default function App() {
           <Routes>
              <Route path="/csv-table" element={<ProtectedRoute element={<CsvTablePage />} />} />
             <Route path="/login" element={<Layout />} />
+              <Route path="/NoResponsePage" element={<NoResponsePage />} />
             <Route path="/register" element={<Register />} />
             <Route path="/forgotPassword" element={<ForgotPassword />} />
             <Route path="/" element={<ProtectedRoute element={<Home />} />} />

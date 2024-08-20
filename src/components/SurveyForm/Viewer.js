@@ -1,15 +1,16 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useLocation } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { Survey, Model } from 'survey-react-ui';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Modal from './Modal'; // Import the Modal component
 import { API_URLS, MESSAGES } from '../messages.js/viewerTexts'; // Import constants and messages from config.js
-
+import { useNavigate } from 'react-router-dom';
 export default function App() {
   const [formArray, setFormArray] = useState(null);
   const [showModal, setShowModal] = useState(false); // State for modal visibility
   const location = useLocation();
+  const navigate=useNavigate();
 
   const getTokenFromCookie = () => {
     const cookies = document.cookie.split(';');
@@ -77,7 +78,8 @@ export default function App() {
       const isValid = await checkFormValidity(formData);
       
       if (!isValid && formData.type !== 'open') {
-        setShowModal(true);
+   
+        navigate("/NoResponsePage");
       }
 
       setFormArray(formData.formData);

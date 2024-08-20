@@ -71,7 +71,7 @@ export default function SurveyCreatorWidget() {
   }
 };
 
-  const publishForm = async (isDraft = false) => {
+  const publishForm = async (isDraft) => {
     if (!isDraft && (type === "one-time" || type === "recurring") && (!startDate || !endDate)) {
       toast.error(messages.errorDateRange);
       return;
@@ -80,7 +80,6 @@ export default function SurveyCreatorWidget() {
     try {
       const token = getCookie('token');
       const creatorJSON = JSON.parse(creator.text);
-    
       const response = await fetch(apiEndpoints.formSave, {
         method: "POST",
         headers: {
@@ -92,7 +91,7 @@ export default function SurveyCreatorWidget() {
           formData: creatorJSON,
           formName: creatorJSON['title'],
           type: type,
-          DateRange: !(type==='open') ? [new Date(startDate).toISOString(), new Date(endDate).toISOString()] : [],
+          DateRange: !(type==='open' || isDraft) ? [new Date(startDate).toISOString(), new Date(endDate).toISOString()] : [],
           isDraft: isDraft
         })
       });

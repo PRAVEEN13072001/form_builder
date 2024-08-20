@@ -106,10 +106,10 @@ const fetchTemplate = () => {
         
 
           // Extract only the TemplateData from each parsedTemplate object
-        
+       
           setParsedTemplates(parsedTemplate);
      
-         
+        
         }
       })
       .catch(error => {
@@ -484,6 +484,7 @@ const restoreTemplate = async (id) => {
                   </Badge>}
                { type == "Draft" && form.isDraft && <FormCard
                   key={form.id}
+                  isDraft={form.isDraft}
                   formName={form.formName}
                   formDescription={form.formData.description}
                   id={form.id}
@@ -493,6 +494,7 @@ const restoreTemplate = async (id) => {
                   />}
                   { type == "Saved" && !form.isDraft && <FormCard
                   key={form.id}
+                  isDraft={form.isDraft}
                   formName={form.formName}
                   formDescription={form.formData.description}
                   id={form.id}
@@ -502,6 +504,7 @@ const restoreTemplate = async (id) => {
                   />}
                   { type == "All"  && <FormCard
                   key={form.id}
+                  isDraft={form.isDraft}
                   formName={form.formName}
                   formDescription={form.formData.description}
                   id={form.id}
@@ -518,6 +521,7 @@ const restoreTemplate = async (id) => {
       !form.isTrash && form.isArchive && (
         <FormCard
           key={form.id}
+          
           formName={form.formName}
           formDescription={form.formData.description}
           id={form.id}
@@ -595,6 +599,7 @@ const restoreTemplate = async (id) => {
       form.isTrash && (
         <FormCard
           key={form.id}
+          isDraft={form.isDraft}
           formName={form.formName}
           formDescription={form.formData.description}
           id={form.id}
@@ -609,7 +614,9 @@ const restoreTemplate = async (id) => {
     {parsedTemplates.map(template => (
       template.isTrash && (
         <FormCard
+         
           key={template.id}
+          isDraft={template.isDraft}
           formName={template.TemplateName}
           id={template.id}
           onDelete={() => handleTemplateDelete(template.id)}

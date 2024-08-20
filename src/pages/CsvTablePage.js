@@ -9,7 +9,7 @@ const CsvTablePage = () => {
   const backButtonRef = useRef(null);
   const params = new URLSearchParams(location.search);
   const id = params.get('formId');
-  console.log(id);
+  
 
   useEffect(() => {
     if (!csvContent) {
