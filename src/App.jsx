@@ -43,7 +43,7 @@ export default function App() {
             <Route path="/forgotPassword" element={<ForgotPassword />} />
             <Route path="/" element={<ProtectedRoute element={<Home />} />} />
             <Route path="/build" element={<ProtectedRoute element={<Builder />} />} />
-            <Route path="/forms" element={<ProtectedRoute element={<Viewer />} />} />
+            <Route path="/forms"  element={<Viewer />}/>
             <Route path="/buildTemplate" element={<ProtectedRoute element={<BuildTemplate />} />} />
             <Route path="/viewForm" element={<ProtectedRoute element={<ViewForm />} />} />
             <Route path="/responses" element={<ProtectedRoute element={<ResponsePage />} />} />

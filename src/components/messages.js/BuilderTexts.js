@@ -1,6 +1,7 @@
 export const creatorOptions = {
   showLogicTab: true,
   isAutoSave: true,
+  showJSONEditorTab: false,
   questionTypes: ["text", "comment", "checkbox", "radiogroup", "dropdown", "boolean", "ranking"]
 };
 

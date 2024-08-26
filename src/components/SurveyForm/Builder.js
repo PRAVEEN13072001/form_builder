@@ -72,43 +72,51 @@ export default function SurveyCreatorWidget() {
 };
 
   const publishForm = async (isDraft) => {
-    if (!isDraft && (type === "one-time" || type === "recurring") && (!startDate || !endDate)) {
-      toast.error(messages.errorDateRange);
-      return;
-    }
+  const creatorJSON = JSON.parse(creator.text);
 
-    try {
-      const token = getCookie('token');
-      const creatorJSON = JSON.parse(creator.text);
-      const response = await fetch(apiEndpoints.formSave, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        credentials: 'include',
-        body: JSON.stringify({
-          formData: creatorJSON,
-          formName: creatorJSON['title'],
-          type: type,
-          DateRange: !(type==='open' || isDraft) ? [new Date(startDate).toISOString(), new Date(endDate).toISOString()] : [],
-          isDraft: isDraft
-        })
-      });
-      if (response.ok) {
-        toast.success(messages.successFormSave);
-        let res = await response.json();
-        if (!isDraft) {
-          updateLink(res.savedFormData.id);
-        }
-      } else {
-        toast.error(messages.errorFormSave);
+  // Check if formName exists
+  if (!creatorJSON['title']) {
+    toast.error("Form name is missing. Please add a form name before saving.");
+    return;
+  }
+
+  if (!isDraft && (type === "one-time" || type === "recurring") && (!startDate || !endDate)) {
+    toast.error(messages.errorDateRange);
+    return;
+  }
+
+  try {
+    const token = getCookie('token');
+    const response = await fetch(apiEndpoints.formSave, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      credentials: 'include',
+      body: JSON.stringify({
+        formData: creatorJSON,
+        formName: creatorJSON['title'],
+        type: type,
+        DateRange: !(type === 'open' || isDraft) ? [new Date(startDate).toISOString(), new Date(endDate).toISOString()] : [],
+        isDraft: isDraft
+      })
+    });
+    
+    if (response.ok) {
+      toast.success(messages.successFormSave);
+      let res = await response.json();
+      if (!isDraft) {
+        updateLink(res.savedFormData.id);
       }
-    } catch (error) {
-      console.error("Error saving form data:", error);
-      toast.error(messages.errorGeneral);
+    } else {
+      toast.error(messages.errorFormSave);
     }
-  };
+  } catch (error) {
+    console.error("Error saving form data:", error);
+    toast.error(messages.errorGeneral);
+  }
+};
 
   const handleModalClose = () => {
     setModalIsOpen(false);
@@ -131,7 +139,16 @@ export default function SurveyCreatorWidget() {
     setModalIsOpen(false);
   };
   const handlePublishButtonClick = () => {
+
     window.localStorage.setItem("survey-json", creator.text);
+    
+  const creatorJSON = JSON.parse(creator.text);
+
+  // Check if formName exists
+  if (!creatorJSON['title']) {
+    toast.error("Form name is missing. Please add a form name before saving.");
+    return;
+  }
       setModalIsOpen(true);
   };
   const handleSaveDraftButtonClick = () => {

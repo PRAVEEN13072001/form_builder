@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import Navbar from '../components/NavbarHome';
 import Header from '../components/header';
@@ -408,33 +409,19 @@ const restoreTemplate = async (id) => {
   }
 };
  return (
-    <div style={{ height:'70vh', backgroundColor: '#f7f6f5' }}>
+    <div style={{ height:'20vh', backgroundColor: '#f7f6f5' , position :"relative" }}>
      <Header />
-     
       <Flex direction='row' wrap='nowrap' bg={'#f7f6f5'}>
        <Navbar setnavItem={setnavItem} setTemplateOpen={setTemplateOpen} />
-       
-       <ScrollArea h={700} bg='#f7f6f5' w='1200' pos={'relative'}>
-         
-          {navItem === "Trash" && (
-            <Container fluid bg={'red'} size={'xl'} c='white' styles={{
-              root: {
-                width: '80vw',
-                textAlign: 'center'
-              }
-            }} >
-              <Text fw={700}>{TextMessages.trashWarning}</Text>
-           </Container>)}
-         {navItem == "My Forms" && (
+               {navItem == "My Forms" && (
   <Container
-    pos={'fixed'}  // Use 'fixed' or 'absolute' to fix its position
+    pos={'absolute'}  // Use 'fixed' or 'absolute' to fix its position
     top={'70px'}  // Adjust the top positioning as per your layout
     right={'20px'}  // Align to the right, adjust as needed
-    fluid
     size={'xl'}
     m={'xs'}
     p={'0'}
-    style={{ zIndex: 1000 }}  // Ensure it stays on top
+    style={{ zIndex: 2 }}  // Ensure it stays on top
   >
     <Group>
       <Button color='orange' variant={type == "All" ? 'filled' : 'outline'} onClick={() => { setType("All") }}>All</Button>
@@ -445,20 +432,32 @@ const restoreTemplate = async (id) => {
 )}
 
              {navItem == "Templates" && <Container
-              pos={'fixed'}  // Use 'fixed' or 'absolute' to fix its position
+              pos={'absolute'}  // Use 'fixed' or 'absolute' to fix its position
     top={'70px'}  // Adjust the top positioning as per your layout
     right={'20px'}  // Align to the right, adjust as needed
     fluid
     size={'xl'}
     m={'xs'}
     p={'0'}
-    style={{ zIndex: 1000 }}>
+    style={{ zIndex: 10 }}>
                <Group>
                 <Button color='orange' variant={type=="All"?'filled':'outline'} onClick={()=>{setType("All")}}>All</Button>
                 <Button color='orange' variant={type=="Draft"?'filled':'outline'} onClick={()=>{setType("Draft")}}>Draft</Button>
                 <Button color='orange' variant={type=="Saved"?'filled':'outline'} onClick={()=>{setType("Saved")}}>Saved</Button>
               </Group>
              </Container>}
+       <ScrollArea h="auto" bg='#f7f6f5' w='1200' pos={'relative'}>
+
+          {navItem === "Trash" && (
+            <Container fluid bg={'red'} size={'xl'} c='white' styles={{
+              root: {
+                width: '80vw',
+                textAlign: 'center'
+              }
+            }} >
+              <Text fw={700}>{TextMessages.trashWarning}</Text>
+           </Container>)}
+ 
           <Flex
             direction='row'
             wrap='wrap'
@@ -471,50 +470,80 @@ const restoreTemplate = async (id) => {
               },
             }}
          >
-            {navItem === 'My Forms' && parsedForms.map(form => (
-              !form.isTrash && !form.isArchive && (
-                <Container pos={'relative'} mt={'50'} key={form.id} >
-                  
-                  {type !="Saved" && form.isDraft &&<Badge color="orange.4" variant="filled" pos={'absolute'} left={'70%'} top={'27%'}  styles={{
-                    root: {
-                      zIndex: 100,  
-                    }
-                  }}>
-                      Draft
-                  </Badge>}
-               { type == "Draft" && form.isDraft && <FormCard
-                  key={form.id}
-                  isDraft={form.isDraft}
-                  formName={form.formName}
-                  formDescription={form.formData.description}
-                  id={form.id}
-                  onDelete={() => handleDelete(form.id)}
-                  onArchive={() => archiveForm(form.id)}
-                  handleSend={() => handleSend(form.id)}
-                  />}
-                  { type == "Saved" && !form.isDraft && <FormCard
-                  key={form.id}
-                  isDraft={form.isDraft}
-                  formName={form.formName}
-                  formDescription={form.formData.description}
-                  id={form.id}
-                  onDelete={() => handleDelete(form.id)}
-                  onArchive={() => archiveForm(form.id)}
-                  handleSend={() => handleSend(form.id)}
-                  />}
-                  { type == "All"  && <FormCard
-                  key={form.id}
-                  isDraft={form.isDraft}
-                  formName={form.formName}
-                  formDescription={form.formData.description}
-                  id={form.id}
-                  onDelete={() => handleDelete(form.id)}
-                  onArchive={() => archiveForm(form.id)}
-                  handleSend={() => handleSend(form.id)}
-                  />}
-                </Container> 
-              ) 
-            ))}
+          
+           {navItem === 'My Forms' && (
+  <>
+    {parsedForms.length === 0 ? (
+      <Container pos={'relative'} mt={'50'} textAlign="center"  >
+     <p style={{ 
+    fontSize: '1.5rem', 
+    color: '#333', 
+    fontWeight: 'bold', 
+    marginBottom: '1rem',
+    lineHeight: '1.4'
+  }}>
+    No forms available. <br />Click the <span style={{color: '#007bff'}}> "+" </span> icon to start creating your forms.
+  </p>
+      </Container>
+    ) : (
+      parsedForms.map(form => (
+        !form.isTrash && !form.isArchive && (
+          <Container pos={'relative'} mt={'50'} key={form.id}>
+            {type !== "Saved" && form.isDraft && (
+              <Badge
+                color="orange.4"
+                variant="filled"
+                pos={'absolute'}
+                left={'70%'}
+                top={'27%'}
+                styles={{ root: { zIndex: 100 } }}
+              >
+                Draft
+              </Badge>
+            )}
+            {type === "Draft" && form.isDraft && (
+              <FormCard
+                key={form.id}
+                isDraft={form.isDraft}
+                formName={form.formName}
+                formDescription={form.formData.description}
+                id={form.id}
+                onDelete={() => handleDelete(form.id)}
+                onArchive={() => archiveForm(form.id)}
+                handleSend={() => handleSend(form.id)}
+              />
+            )}
+            {type === "Saved" && !form.isDraft && (
+              <FormCard
+                key={form.id}
+                isDraft={form.isDraft}
+                formName={form.formName}
+                formDescription={form.formData.description}
+                id={form.id}
+                onDelete={() => handleDelete(form.id)}
+                onArchive={() => archiveForm(form.id)}
+                handleSend={() => handleSend(form.id)}
+              />
+            )}
+            {type === "All" && (
+              <FormCard
+                key={form.id}
+                isDraft={form.isDraft}
+                formName={form.formName}
+                formDescription={form.formData.description}
+                id={form.id}
+                onDelete={() => handleDelete(form.id)}
+                onArchive={() => archiveForm(form.id)}
+                handleSend={() => handleSend(form.id)}
+              />
+            )}
+          </Container>
+        )
+      ))
+    )}
+  </>
+)}
+
             {navItem === 'Archive' && (
   <>
     {parsedForms.map(form => (
@@ -563,6 +592,7 @@ const restoreTemplate = async (id) => {
                         {type === "Draft" && template.isDraft && (
                             <FormCard
                                 key={template.id}
+                                id={template.id}
                                 formName={template.TemplateName}
                                 Template={true}
                                 onDelete={() => handleTemplateDelete(template.id)}
@@ -573,6 +603,7 @@ const restoreTemplate = async (id) => {
                         {type === "Saved" && !template.isDraft && (
                             <FormCard
                                 key={template.id}
+                                  id={template.id}
                                 formName={template.TemplateName}
                                 Template={true}
                                 onDelete={() => handleTemplateDelete(template.id)}
@@ -582,6 +613,7 @@ const restoreTemplate = async (id) => {
                         {type === "All" && (
                             <FormCard
                                 key={template.id}
+                                  id={template.id}
                                 formName={template.TemplateName}
                                 Template={true}
                                 onDelete={() => handleTemplateDelete(template.id)}
@@ -654,7 +686,7 @@ const restoreTemplate = async (id) => {
         </Modal>
          <div className="fixed-icon">
    {showIcon && (
-          <div className="fixed-icon" style={{ position: 'fixed', bottom: '20px', right: '20px' }}>
+          <div className="fixed-icon" style={{ position: 'absolute', bottom: '20px', right: '20px' }}>
             <ActionIcon size="lg" color="blue" onClick={handleAddClick}>
               <IconPlus size={100} />
             </ActionIcon>
@@ -697,9 +729,8 @@ const restoreTemplate = async (id) => {
   />
   <Button mt={10} bg={'orange'} onClick={() => sendMail(recipientEmail)}>{TextMessages.sendViaEmail}</Button>
 </Modal>
-      <FooterCentered />
+      <FooterCentered/>
       <ToastContainer />
     </div>
   );
 }
-

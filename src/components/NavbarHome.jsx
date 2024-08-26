@@ -27,8 +27,8 @@ export default function Navbar({setnavItem,setTemplateOpen}) {
   };
 
   return (
-    <div>
-      <aside style={{ width: isCollapse ? '5vw' : '20vw', height: '90.1vh', backgroundColor: '#f7f6f5',borderRight:'1px solid black' }}>
+   <div style={{ minHeight: '83vh', display: 'flex' }}>
+      <aside style={{ width: isCollapse ? '5vw' : '20vw', minHeight: '83vh', backgroundColor: '#f7f6f5',borderRight:'1px solid black' }}>
       <nav style={{ padding: '0px' }}>
         <Container size={'xl'} h={'40'} mr={'0'} ml={'0'} fluid styles={{
           root: {

@@ -227,10 +227,14 @@ export default function HeaderSimple() {
     }
   };
 
-  const handleMenuClick = () => {
-    document.cookie = 'token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-    navigate('/login');
-  };
+const handleMenuClick = () => {
+  const isLocalhost = window.location.hostname === 'localhost';
+
+  document.cookie = `token=; Path=/; Domain=${isLocalhost ? 'localhost' : '.navriti.com'}; Expires=Thu, 01 Jan 1970 00:00:01 GMT; SameSite=None; Secure`;
+
+  navigate('/login');
+};
+
 
   const links = [
     { link: openProfile, label: 'Profile' }, // New profile link
@@ -238,118 +242,124 @@ export default function HeaderSimple() {
     { link: handleMenuClick, label: 'Logout' },
   ];
 
-  return (
+ return (
     <div>
-      <div style={{ margin: '0', padding: '0' }}>
-      <Container m={0} p={0} h={70} bg={'white'} size={'xl'} fluid styles={{
-        root: {
-          borderBottom: '1px solid black'
-        }
-      }}>
-        <Flex direction="row" align="center" justify="space-between" h="100%">
-          <Flex align="center">
-            <Image src={logo} height={50} width={50} />
+      <div style={{ margin: '0', padding: '0', position: 'relative', zIndex: 1000 }}>
+        <Container m={0} p={0} h={70} bg={'white'} size={'xl'} fluid styles={{
+          root: {
+            borderBottom: '1px solid black',
+            zIndex: 10000, // Ensure this is below the dropdown
+          }
+        }}>
+          <Flex direction="row" align="center" justify="space-between" h="100%">
+            <Flex align="center">
+              <Image src={logo} height={50} width={50} />
+            </Flex>
+            <Flex align="center" position="relative">
+              <Menu
+                control={<Avatar size="sm" src="https://via.placeholder.com/150" />} // Placeholder image
+                transition="pop"
+                transitionDuration={150}
+                transitionTimingFunction="ease"
+              >
+                <Menu.Target>
+                  <Image src={profile} height={50} width={50} />
+                </Menu.Target>
+                <Menu.Dropdown position="top" gutter={10} styles={{
+                  root: {
+                    zIndex: 3000, // Ensure this is above other elements
+                    position: 'absolute', // Adjust as needed
+                  }
+                }}>
+                  {links.map((item, index) => (
+                    <MenuItem key={index} onClick={item.link}>
+                      {item.label}
+                    </MenuItem>
+                  ))}
+                </Menu.Dropdown>
+              </Menu>
+            </Flex>
           </Flex>
-          <Flex align="center">
-            <Menu
-              control={<Avatar size="sm" src="https://via.placeholder.com/150" />} // Placeholder image
-              transition="pop"
-              transitionDuration={150}
-              transitionTimingFunction="ease"
-            >
-              <Menu.Target>
-                <Image src={profile} height={50} width={50} />
-              </Menu.Target>
-              <Menu.Dropdown position="top" gutter={10}>
-                {links.map((item, index) => (
-                  <MenuItem key={index} onClick={item.link}>
-                    {item.label}
-                  </MenuItem>
-                ))}
-              </Menu.Dropdown>
-            </Menu>
-          </Flex>
-        </Flex>
-      </Container>
+        </Container>
 
-      <Modal opened={opened} onClose={close} title="Create Username and Password" centered>
-        <form onSubmit={handleCreateUserSubmit}>
-          <TextInput
-            mt="sm"
-            label="Username"
-            placeholder="Username"
-            name="username"
-            value={createUserForm.username}
-            onChange={handleCreateUserChange}
-            error={createUserForm.errors.username}
-          />
-          <PasswordInput
-            label="Password"
-            placeholder="Password"
-            name="password"
-            value={createUserForm.password}
-            onChange={handleCreateUserChange}
-            error={createUserForm.errors.password}
-          />
-          <PasswordInput
-            label="Confirm Password"
-            placeholder="Confirm Password"
-            name="confirmPassword"
-            value={createUserForm.confirmPassword}
-            onChange={handleCreateUserChange}
-            error={createUserForm.errors.confirmPassword}
-          />
 
-          <Button type="submit" mt="sm">
-            Submit
-          </Button>
-        </form>
-      </Modal>
+        <Modal opened={opened} onClose={close} title="Create Username and Password" centered>
+          <form onSubmit={handleCreateUserSubmit}>
+            <TextInput
+              mt="sm"
+              label="Username"
+              placeholder="Username"
+              name="username"
+              value={createUserForm.username}
+              onChange={handleCreateUserChange}
+              error={createUserForm.errors.username}
+            />
+            <PasswordInput
+              label="Password"
+              placeholder="Password"
+              name="password"
+              value={createUserForm.password}
+              onChange={handleCreateUserChange}
+              error={createUserForm.errors.password}
+            />
+            <PasswordInput
+              label="Confirm Password"
+              placeholder="Confirm Password"
+              name="confirmPassword"
+              value={createUserForm.confirmPassword}
+              onChange={handleCreateUserChange}
+              error={createUserForm.errors.confirmPassword}
+            />
 
-      <Modal opened={changePasswordOpened} onClose={closeChangePassword} title="Change Password" centered>
-        <form onSubmit={handleChangePasswordSubmit}>
-          <PasswordInput
-            mt="sm"
-            label="Current Password"
-            placeholder="Current Password"
-            name="currentPassword"
-            value={changePasswordForm.currentPassword}
-            onChange={handleChangePasswordChange}
-            error={changePasswordForm.errors.currentPassword}
-          />
-          <PasswordInput
-            label="New Password"
-            placeholder="New Password"
-            name="newPassword"
-            value={changePasswordForm.newPassword}
-            onChange={handleChangePasswordChange}
-            error={changePasswordForm.errors.newPassword}
-          />
-          <PasswordInput
-            label="Confirm New Password"
-            placeholder="Confirm New Password"
-            name="confirmNewPassword"
-            value={changePasswordForm.confirmNewPassword}
-            onChange={handleChangePasswordChange}
-            error={changePasswordForm.errors.confirmNewPassword}
-          />
-          <Button type="submit" mt="sm">
-            Submit
-          </Button>
-        </form>
-      </Modal>
+            <Button type="submit" mt="sm">
+              Submit
+            </Button>
+          </form>
+        </Modal>
 
-      <Modal opened={profileOpened} onClose={closeProfile} title="Profile Information" centered>
-        <div>
-          <p>Email: {profileEmail || ''}</p>
-          <p>Employee ID: {profileInfo.id || ''}</p>
-          <p>Vertical: {profileVertical|| ''}</p>
-          <p>Department: {profileDepartment || ''}</p>
-          <p>Job Title: {profileJobTitle || ''}</p>
-        </div>
-      </Modal>
+        <Modal opened={changePasswordOpened} onClose={closeChangePassword} title="Change Password" centered>
+          <form onSubmit={handleChangePasswordSubmit}>
+            <PasswordInput
+              mt="sm"
+              label="Current Password"
+              placeholder="Current Password"
+              name="currentPassword"
+              value={changePasswordForm.currentPassword}
+              onChange={handleChangePasswordChange}
+              error={changePasswordForm.errors.currentPassword}
+            />
+            <PasswordInput
+              label="New Password"
+              placeholder="New Password"
+              name="newPassword"
+              value={changePasswordForm.newPassword}
+              onChange={handleChangePasswordChange}
+              error={changePasswordForm.errors.newPassword}
+            />
+            <PasswordInput
+              label="Confirm New Password"
+              placeholder="Confirm New Password"
+              name="confirmNewPassword"
+              value={changePasswordForm.confirmNewPassword}
+              onChange={handleChangePasswordChange}
+              error={changePasswordForm.errors.confirmNewPassword}
+            />
+            <Button type="submit" mt="sm">
+              Submit
+            </Button>
+          </form>
+        </Modal>
+
+        <Modal opened={profileOpened} onClose={closeProfile} title="Profile Information" centered>
+          <div>
+            <p>Email: {profileEmail || ''}</p>
+            <p>Employee ID: {profileInfo.id || ''}</p>
+            <p>Vertical: {profileVertical || ''}</p>
+            <p>Department: {profileDepartment || ''}</p>
+            <p>Job Title: {profileJobTitle || ''}</p>
+          </div>
+        </Modal>
+      </div>
     </div>
-    </div>
-    
   );
 }

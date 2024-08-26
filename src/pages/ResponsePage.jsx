@@ -22,7 +22,7 @@ import IndividualResponseCard from '../components/ResponsePage/IndividualRespons
 import { URLs } from './messages/apiUrls';
 import { useNavigate } from 'react-router-dom';
 
-const ResponsePage = () => {  const navigate = useNavigate();
+const ResponsePage =() => {  const navigate = useNavigate();
   const [responses, setResponses] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [individualResponses, setIndividualResponses] = useState([]);
@@ -30,14 +30,9 @@ const ResponsePage = () => {  const navigate = useNavigate();
   const [type, setType] = useState('Questions');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [csvContent, setCsvContent] = useState('');
-  const location = useLocation();
-  const params = new URLSearchParams(location.search);
-  const id = params.get('formId');
-
-  useEffect(() => {
-     
-    async function fetchResponses() {
-      function getTokenFromCookie() {
+  
+const [id,SetID]=useState('');
+   function getTokenFromCookie() {
         const cookies = document.cookie.split(';');
         const tokenCookie = cookies.find((cookie) => cookie.trim().startsWith('token='));
         if (tokenCookie) {
@@ -46,8 +41,45 @@ const ResponsePage = () => {  const navigate = useNavigate();
           return null;
         }
       }
+  const fetchDecryptedId = async (encryptedId) => {
+    try {
+      const token = getTokenFromCookie();
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/decryptId`, {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Bearer ' + token,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          encryptedId: encryptedId,
+        }),
+      });
+     
+      if (!response.ok) {
+        throw new Error("Failed to decrypt ID");
+      }
+
+      const decryptedData = await response.json();
+     
+      return decryptedData.decryptedId;
+    } catch (error) {
+      console.error('Error decrypting ID:', error);
+      throw error;
+    }
+  };
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  const ID = params.get('formId');
+  const fetchId=async ()=>
+    {
+  const id=await fetchDecryptedId(ID);
+  SetID(id);
+    }
+    async function fetchResponses() {
+   
       const token = getTokenFromCookie();
       try {
+       
         const response = await fetch(URLs.RESPONSES, {
           method: 'post',
           headers: {
@@ -83,7 +115,14 @@ const ResponsePage = () => {  const navigate = useNavigate();
         console.error(ToastMessages.FETCH_RESPONSE_ERROR, error);
       }
     }
-    fetchResponses();
+  useEffect(() => {
+       fetchId();
+       if(id)
+       {
+fetchResponses();
+       }
+    
+    
   }, [id]);
 
   useEffect(() => {

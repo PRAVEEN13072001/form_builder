@@ -16,6 +16,7 @@ import {
 const creatorOptions = {
   showLogicTab: true,
   isAutoSave: true,
+   showJSONEditorTab: false,
   questionTypes: ['text', 'comment', 'checkbox', 'radiogroup', 'dropdown', 'boolean', 'ranking'],
 };
 
@@ -56,14 +57,37 @@ export default function SurveyCreatorWidget() {
   const [endDate, setEndDate] = useState('');
   const location = useLocation();
   const [templateData, setTemplateData] = useState(null);
+  const [id,SetId]=useState("");
+  const [TemplateId,SetTemplateId]=useState("");
 
-  useEffect(() => {
-    const initializeSurveyCreator = async () => {
-      const params = new URLSearchParams(location.search);
-      const id = params.get('id');
-      const TemplateId = params.get('TemplateId');
+  // Function to fetch decrypted formId from API
+  const fetchDecryptedId = async (encryptedId) => {
+    try {
+      const token = getTokenFromCookie();
+      const response = await fetch(messages.DECRYPT_ID, {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Bearer ' + token,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          encryptedId: encryptedId,
+        }),
+      });
 
-      const getTokenFromCookie = () => {
+      if (!response.ok) {
+        throw new Error(messages.DECRYPT_ID_FAIL);
+      }
+
+      const decryptedData = await response.json();
+     
+      return decryptedData.decryptedId;
+    } catch (error) {
+      console.error('Error decrypting ID:', error);
+      throw error;
+    }
+  };
+   const getTokenFromCookie = () => {
         const cookies = document.cookie.split(';');
         const tokenCookie = cookies.find((cookie) => cookie.trim().startsWith('token='));
         if (tokenCookie) {
@@ -72,10 +96,24 @@ export default function SurveyCreatorWidget() {
           return null;
         }
       };
-
+  useEffect(() => {
+    const initializeSurveyCreator = async () => {
+      const params = new URLSearchParams(location.search);
+      const ID = params.get('id');
+        if(ID)
+        {
+        
+          const  id= await fetchDecryptedId(ID);
+          SetId(id);
+        }
+      const TemplateID = params.get('TemplateId'); 
+      if(TemplateID)
+      {
+        const TemplateId= await fetchDecryptedId(TemplateID); 
+        SetTemplateId(TemplateId);
+      }
+      
       const token = getTokenFromCookie();
-    
-
       try {
         let template = null;
         if (TemplateId) {
@@ -129,7 +167,7 @@ export default function SurveyCreatorWidget() {
     };
 
     initializeSurveyCreator();
-  }, [location.search]);
+  }, [location.search,id,TemplateId]);
 
   const saveFormData = async (isDraft) => {
     try {
