@@ -105,7 +105,6 @@ const [id,SetID]=useState('');
               }
             });
           });
-
           setResponses(groupedResponses);
           setIsLoading(false);
         } else {

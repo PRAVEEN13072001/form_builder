@@ -19,12 +19,8 @@ import { URLs } from './messages/apiUrls';
 export default function Home() {
   const Navigate = useNavigate();
   const [templateOpen, setTemplateOpen] = useState(false);
-
   const [type, setType] = useState("All");
-
-  const [parsedForms, setParsedForms] = useState([
-
- ]);
+  const [parsedForms, setParsedForms] = useState([]);
  const [parsedTemplates,setParsedTemplates]=useState([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [Link,SetLink] =useState(""); // Use parsedForms consistently
@@ -34,7 +30,8 @@ export default function Home() {
   const [templatesFetched, setTemplatesFetched] = useState(false);
   const [emailModalOpen, setEmailModalOpen] = useState(false);
 const [recipientEmail, setRecipientEmail] = useState('');
-
+const [a,SetA]=useState("");
+const [isLoading, setIsLoading] = useState(true); 
   function getTokenFromCookie() {
     const cookies = document.cookie.split(';');
     const tokenCookie = cookies.find(cookie => cookie.trim().startsWith('token='));
@@ -46,16 +43,28 @@ const [recipientEmail, setRecipientEmail] = useState('');
   }
   
   
-  useEffect(() => {
+useEffect(() => {
   const token = getTokenFromCookie();
+
   if (!token) {
     window.location.href = '/login';
   } else {
-    fetchData();
-    toggleIconVisibility();
-    fetchTemplate();
+    const initializeData = async () => {
+      try {
+        setIsLoading(true); // Start loading
+        await fetchData();  // Fetch forms data
+        toggleIconVisibility();  // Handle icon visibility
+        await fetchTemplate();  // Fetch template data
+
+      } catch (error) {
+        console.error("Error initializing data:", error);
+      }
+    };
+
+    initializeData();
   }
 }, []);
+
 
 const fetchData = () => {
   const token = getTokenFromCookie();
@@ -73,7 +82,12 @@ const fetchData = () => {
             ...form,
             formData: form.formData,
           }));
-          setParsedForms(parsedForms); // Update state with parsed data
+          if(!parsedForms)
+          {
+            SetA("12");
+          }
+          setParsedForms(parsedForms);
+          setIsLoading(false); // Update state with parsed data
         } else {
           console.error('Invalid data format:', data);
         }
@@ -329,8 +343,6 @@ const handleTemplateDelete = async (id) => {
     }
   };
   const archiveTemplate = async (id) => {
-
-
   const token = getTokenFromCookie();
   if (token) {
     try {
@@ -409,10 +421,39 @@ const restoreTemplate = async (id) => {
   }
 };
  return (
+  <div>
+    {isLoading ? ( <div> Loading...</div>) : (
     <div style={{ height:'20vh', backgroundColor: '#f7f6f5' , position :"relative" }}>
      <Header />
+     
       <Flex direction='row' wrap='nowrap' bg={'#f7f6f5'}>
+          
        <Navbar setnavItem={setnavItem} setTemplateOpen={setTemplateOpen} />
+      
+      <Container
+  pos={'absolute'}
+   top={navItem === 'Trash' ? '110px' : '70px'}    // Adjust this based on your layout
+  left={'20%'}  // Center horizontally
+  transform={'translateX(-50%)'}  // Center the container
+  size={'xl'}
+  m={'xs'}
+  p={'10px 20px'}  // Add some padding for better spacing
+  style={{
+    zIndex: 2,  // Ensure it stays on top
+    backgroundColor: '#ff7043',  // A vibrant color for the background
+    color: 'white',  // White text color for contrast
+    borderRadius: '8px',  // Smooth, rounded corners
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',  // Subtle shadow for depth
+    fontWeight: 'bold',  // Make the text bold
+    fontSize: '13px',  // Slightly larger font size for readability
+    textAlign: 'center',  // Center the text inside the container
+    maxWidth: '150px',  // Limit the width to keep it compact
+    wordWrap: 'break-word',  // Ensure long text breaks to a new line
+  }}
+>
+  <p style={{ margin: 0 }}>{navItem}</p>
+</Container>
+
                {navItem == "My Forms" && (
   <Container
     pos={'absolute'}  // Use 'fixed' or 'absolute' to fix its position
@@ -424,6 +465,7 @@ const restoreTemplate = async (id) => {
     style={{ zIndex: 2 }}  // Ensure it stays on top
   >
     <Group>
+      
       <Button color='orange' variant={type == "All" ? 'filled' : 'outline'} onClick={() => { setType("All") }}>All</Button>
       <Button color='orange' variant={type == "Draft" ? 'filled' : 'outline'} onClick={() => { setType("Draft") }}>Draft</Button>
       <Button color='orange' variant={type == "Saved" ? 'filled' : 'outline'} onClick={() => { setType("Saved") }}>Saved</Button>
@@ -473,7 +515,7 @@ const restoreTemplate = async (id) => {
           
            {navItem === 'My Forms' && (
   <>
-    {parsedForms.length === 0 ? (
+    { parsedForms.length === 0 ? (
       <Container pos={'relative'} mt={'50'} textAlign="center"  >
      <p style={{ 
     fontSize: '1.5rem', 
@@ -486,6 +528,7 @@ const restoreTemplate = async (id) => {
   </p>
       </Container>
     ) : (
+      
       parsedForms.map(form => (
         !form.isTrash && !form.isArchive && (
           <Container pos={'relative'} mt={'50'} key={form.id}>
@@ -575,9 +618,22 @@ const restoreTemplate = async (id) => {
   </>
 )}
 
-       {navItem === 'Templates' && (
+     {navItem === 'Templates' && (
     <div>
-            {parsedTemplates.map(template => (
+        {parsedTemplates.length === 0 ? (
+            <Container pos={'relative'} mt={'50'} textAlign="center"  >
+     <p style={{ 
+    fontSize: '1.5rem', 
+    color: '#333', 
+    fontWeight: 'bold', 
+    marginBottom: '1rem',
+    lineHeight: '1.4'
+  }}>
+    No Templates available. <br />Click the <span style={{color: '#007bff'}}> "+" </span> icon to start creating your templates.
+  </p>
+      </Container>
+        ) : (
+            parsedTemplates.map(template => (
                 !template.isTrash && !template.isArchive && (
                     <Container pos={'relative'} mt={'50'} key={template.id}>
                         {type !== "Saved" && template.isDraft && (
@@ -597,13 +653,12 @@ const restoreTemplate = async (id) => {
                                 Template={true}
                                 onDelete={() => handleTemplateDelete(template.id)}
                                 onArchive={() => archiveTemplate(template.id)}
-                              
                             />
                         )}
                         {type === "Saved" && !template.isDraft && (
                             <FormCard
                                 key={template.id}
-                                  id={template.id}
+                                id={template.id}
                                 formName={template.TemplateName}
                                 Template={true}
                                 onDelete={() => handleTemplateDelete(template.id)}
@@ -613,7 +668,7 @@ const restoreTemplate = async (id) => {
                         {type === "All" && (
                             <FormCard
                                 key={template.id}
-                                  id={template.id}
+                                id={template.id}
                                 formName={template.TemplateName}
                                 Template={true}
                                 onDelete={() => handleTemplateDelete(template.id)}
@@ -622,9 +677,11 @@ const restoreTemplate = async (id) => {
                         )}
                     </Container>
                 )
-            ))}
-        </div>
-    )}
+            ))
+        )}
+    </div>
+)}
+
 {navItem === 'Trash' && (
   <div>
     {parsedForms.map(form => (
@@ -686,7 +743,7 @@ const restoreTemplate = async (id) => {
         </Modal>
          <div className="fixed-icon">
    {showIcon && (
-          <div className="fixed-icon" style={{ position: 'absolute', bottom: '20px', right: '20px' }}>
+          <div className="fixed-icon" style={{ position: 'absolute', bottom: '60px', right: '20px' }}>
             <ActionIcon size="lg" color="blue" onClick={handleAddClick}>
               <IconPlus size={100} />
             </ActionIcon>
@@ -731,6 +788,7 @@ const restoreTemplate = async (id) => {
 </Modal>
       <FooterCentered/>
       <ToastContainer />
+    </div>)}
     </div>
   );
 }

@@ -7,7 +7,7 @@ export function FooterCentered() {
     <div className="footer" style={{ padding: '0.5rem', borderTop: '1px solid black' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Image src={logo} height={30} width={30} />
-        <Group>navriti technologies pvt ltd</Group>
+        <Group>Navriti Technologies © All rights reserved</Group>
         <Group gap="xs" justify="flex-end" wrap="nowrap">
           <ActionIcon size="lg" variant="default" radius="xl">
             <IconBrandTwitter style={{ width: rem(18), height: rem(18) }} stroke={1.5} />
