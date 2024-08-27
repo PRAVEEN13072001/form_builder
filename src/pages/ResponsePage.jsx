@@ -105,6 +105,7 @@ const [id,SetID]=useState('');
               }
             });
           });
+         
           setResponses(groupedResponses);
           setIsLoading(false);
         } else {
@@ -195,11 +196,11 @@ fetchResponses();
   };
 
   const getChartData = (response) => {
+  
     const answerCounts = {};
     response.answers.forEach((answer) => {
-      if (answer.split(' ').length <= 2) {
+     
         answerCounts[answer] = (answerCounts[answer] || 0) + 1;
-      }
     });
 
     return {
@@ -317,13 +318,20 @@ fetchResponses();
               ))
             )
           )}
-          {type === typeTexts.summary && (
-            responses.map((response, index) => (
-              <div key={index}>
-                <BarChart  key ={index} data={getChartData(response)} flag={response.type === 'dropdown'} />
-              </div>
-            ))
-          )}
+       {type === typeTexts.summary && (
+  responses.map((response, index) => (
+    <div key={index}>
+      {response.type !== "text" && response.type !== "comment" && (
+        <BarChart 
+          key={index} 
+          data={getChartData(response)} 
+          flag={response.type === 'dropdown'} 
+        />
+      )}
+    </div>
+  ))
+)}
+
           {type === typeTexts.individualType && (
             individualResponses.length === 0 ? (
               <Text>{DefaultTexts.NO_RESPONSES}</Text>

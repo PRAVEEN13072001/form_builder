@@ -91,7 +91,7 @@ export default function App() {
   const alertResults = useCallback(async (sender) => {
     const ele=sender.jsonObj.pages[0].elements;
     
-    
+ 
     try {
       
 
@@ -102,6 +102,7 @@ export default function App() {
       const token = getTokenFromCookie();
 
       // Construct response data including question titles and types
+      
     const responseData = Object.keys(sender.data).map((questionName) => {
     const question = sender.getQuestionByName(questionName);
 
@@ -119,15 +120,13 @@ export default function App() {
     }
  if (question.getType() === 'ranking') {
     const questionData = ele.find(e => e.name === questionName);
-    
+     // Assuming sender.data[questionName] is an array of values representing the ranking order
 
-    // Assuming sender.data[questionName] is an array of values representing the ranking order
+     
     const answer = sender.data[questionName].map(value => {
         const choice = questionData.choices.find(a => a.value === value);
         return choice ? choice.text : 'Unknown'; // Handle unknown choices
     }).join(', '); // Join the text values with commas
-
-
     return {
         name: questionName,
         title: question.title,
