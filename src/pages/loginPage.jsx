@@ -12,6 +12,8 @@ import {
   Text,
   Group,
   Modal,
+  Box,
+  container
 } from '@mantine/core';
 import GoogleButton from '../components/GoogleButton';
 import { ToastMessages, DefaultTexts } from "./messages/loginTexts"; // Adjust the path as necessary
@@ -22,7 +24,7 @@ export default function AuthenticationImage() {
   const [password, setPassword] = useState('');
   const [forgotPasswordEmail, setForgotPasswordEmail] = useState('');
   const [modalOpened, setModalOpened] = useState(false);
-
+const [posl,SetPosR]=useState("40%")
   useEffect(() => {
     const token = getTokenFromCookie();
     if (token) {
@@ -118,9 +120,48 @@ export default function AuthenticationImage() {
     }
   };
 
+  const handleOnTouch=async()=>
+  {
+     const response = await fetch(URLs.LOGIN, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({ userName, password }),
+      });
+      if(response.status!=='200')
+      {
+        if(posl=="40%")SetPosR("70%");
+        else if(posl=="70%"){
+          SetPosR("10%");
+        }
+        else{
+          SetPosR("70%")
+        }
+
+      }
+      if(response.status=="200")
+      {
+        SetPosR("40%");
+      }
+    
+  }
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-      <Paper className={'form'} radius={0} p={30} w={'50%'} h={'100%'}>
+    <div 
+      style={{
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        minHeight: '100vh',
+        backgroundImage: 'url(https://t3.ftcdn.net/jpg/03/55/60/70/360_F_355607062_zYMS8jaz4SfoykpWz5oViRVKL32IabTP.jpg)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+       
+      }}
+    >
+   <Box  p={10} r={20} pos={"relative"}>
+      <Paper className={'form'} radius={20} pt={90} pb={90} pl ={160}  pr={"160"} w={'100%'} h={'100%'} >
         <Title order={2} className={'title'} ta="center" mt="md" mb={50}>
           {DefaultTexts.FORM_TITLE}
         </Title>
@@ -144,13 +185,9 @@ export default function AuthenticationImage() {
           onChange={(e) => setPassword(e.target.value)}
         />
         <Checkbox label="Keep me logged in" mt="lg" size="md" />
-        <Button fullWidth mt="lg" size="lg" onClick={handleSubmit}>
+        <Button  onMouseEnter={handleOnTouch} bottom={40} left ={posl} mt="lg" size="lg" onClick={handleSubmit} pos={"absolute"}  style={{transition: 'left 0.3s ease'}}>
           {DefaultTexts.LOGIN_BUTTON}
         </Button>
-
-        {/* <Text ta="center" mt="md">
-          <Link to="/register">{DefaultTexts.REGISTER_PROMPT}</Link>
-        </Text> */}
 
         <Text ta="center" mt="md">
           <span onClick={() => setModalOpened(true)} style={{ color: 'blue', cursor: 'pointer' }}>
@@ -173,6 +210,10 @@ export default function AuthenticationImage() {
 
         <ToastContainer />
       </Paper>
+      </Box>
     </div>
   );
 }
+
+
+

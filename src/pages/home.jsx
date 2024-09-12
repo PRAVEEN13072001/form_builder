@@ -587,100 +587,117 @@ const restoreTemplate = async (id) => {
   </>
 )}
 
-            {navItem === 'Archive' && (
-  <>
-    {parsedForms.map(form => (
-      !form.isTrash && form.isArchive && (
-        <FormCard
-          key={form.id}
-          
-          formName={form.formName}
-          formDescription={form.formData.description}
-          id={form.id}
-          onDelete={() => handleDelete(form.id)}
-          offArchive={() => ArchiveOff(form.id)}
-          handleSend={handleSend}
-        />
-      )
-    ))}
-    {parsedTemplates.map(template => (
-     !template.isTrash && template.isArchive && (
-        <FormCard
-          key={template.id}
-          formName={template.TemplateName}
-          Template={true}
-          viewTemplate={true}
-          onDelete={() => handleTemplateDelete(template.id)}
-          offArchive={() => archiveOffTemplate(template.id)}
-        />
-      )
-    ))}
-  </>
+{navItem === 'Archive' && (
+  <div>
+    {(parsedForms.filter(form => form.isArchive && !form.isTrash).length === 0 &&
+      parsedTemplates.filter(template => template.isArchive && !template.isTrash).length === 0) ? (
+      <Container pos={'relative'} mt={'50'} textAlign="center">
+        <p style={{ 
+          fontSize: '1.5rem', 
+          color: '#333', 
+          fontWeight: 'bold', 
+          marginBottom: '1rem',
+          lineHeight: '1.4'
+        }}>
+          No forms or templates have been archived.
+        </p>
+      </Container>
+    ) : (
+      <>
+        {parsedForms.map(form => (
+          !form.isTrash && form.isArchive && (
+            <FormCard
+              key={form.id}
+              formName={form.formName}
+              formDescription={form.formData.description}
+              id={form.id}
+              onDelete={() => handleDelete(form.id)}
+              offArchive={() => ArchiveOff(form.id)}
+              handleSend={handleSend}
+            />
+          )
+        ))}
+        {parsedTemplates.map(template => (
+          !template.isTrash && template.isArchive && (
+            <FormCard
+              key={template.id}
+              formName={template.TemplateName}
+              Template={true}
+              viewTemplate={true}
+              onDelete={() => handleTemplateDelete(template.id)}
+              offArchive={() => archiveOffTemplate(template.id)}
+            />
+          )
+        ))}
+      </>
+    )}
+  </div>
 )}
 
-     {navItem === 'Templates' && (
-    <div>
-        {parsedTemplates.length === 0 ? (
-            <Container pos={'relative'} mt={'50'} textAlign="center"  >
-     <p style={{ 
-    fontSize: '1.5rem', 
-    color: '#333', 
-    fontWeight: 'bold', 
-    marginBottom: '1rem',
-    lineHeight: '1.4'
-  }}>
-    No Templates available. <br />Click the <span style={{color: '#007bff'}}> "+" </span> icon to start creating your templates.
-  </p>
+{navItem === 'Templates' && (
+  <div>
+    {parsedTemplates.length === 0 ? (
+      <Container pos={'relative'} mt={'50'} textAlign="center">
+        <p style={{ 
+          fontSize: '1.5rem', 
+          color: '#333', 
+          fontWeight: 'bold', 
+          marginBottom: '1rem',
+          lineHeight: '1.4'
+        }}>
+          No Templates available. <br />Click the <span style={{color: '#007bff'}}> "+" </span> icon to start creating your templates.
+        </p>
       </Container>
-        ) : (
-            parsedTemplates.map(template => (
-                !template.isTrash && !template.isArchive && (
-                    <Container pos={'relative'} mt={'50'} key={template.id}>
-                        {type !== "Saved" && template.isDraft && (
-                            <Badge color="orange.4" variant="filled" pos={'absolute'} left={'70%'} top={'27%'} styles={{
-                                root: {
-                                    zIndex: 100,
-                                }
-                            }}>
-                                Draft
-                            </Badge>
-                        )}
-                        {type === "Draft" && template.isDraft && (
-                            <FormCard
-                                key={template.id}
-                                id={template.id}
-                                formName={template.TemplateName}
-                                Template={true}
-                                onDelete={() => handleTemplateDelete(template.id)}
-                                onArchive={() => archiveTemplate(template.id)}
-                            />
-                        )}
-                        {type === "Saved" && !template.isDraft && (
-                            <FormCard
-                                key={template.id}
-                                id={template.id}
-                                formName={template.TemplateName}
-                                Template={true}
-                                onDelete={() => handleTemplateDelete(template.id)}
-                                onArchive={() => archiveTemplate(template.id)}
-                            />
-                        )}
-                        {type === "All" && (
-                            <FormCard
-                                key={template.id}
-                                id={template.id}
-                                formName={template.TemplateName}
-                                Template={true}
-                                onDelete={() => handleTemplateDelete(template.id)}
-                                onArchive={() => archiveTemplate(template.id)}
-                            />
-                        )}
-                    </Container>
-                )
-            ))
-        )}
-    </div>
+    ) : (
+      parsedTemplates.map(template => (
+        !template.isTrash && !template.isArchive && (
+          <Container pos={'relative'} mt={'50'} key={template.id}>
+            {type !== "Saved" && template.isDraft && (
+              <Badge color="orange.4" variant="filled" pos={'absolute'} left={'70%'} top={'27%'} styles={{
+                root: {
+                  zIndex: 100,
+                }
+              }}>
+                Draft
+              </Badge>
+            )}
+            {type === "Draft" && template.isDraft && (
+              <FormCard
+                key={template.id}
+                id={template.id}
+                formName={template.TemplateName}
+                Template={true}
+                onDelete={() => handleTemplateDelete(template.id)}
+                onArchive={() => archiveTemplate(template.id)}
+              />
+            )}
+            {type === "Saved" && !template.isDraft && (
+              <FormCard
+                key={template.id}
+                id={template.id}
+                formName={template.TemplateName}
+                Template={true}
+                onDelete={() => handleTemplateDelete(template.id)}
+                onArchive={() => archiveTemplate(template.id)}
+              />
+            )}
+            {type === "All" && (
+              <FormCard
+                key={template.id}
+                id={template.id}
+                formName={template.TemplateName}
+                Template={true}
+                onDelete={() => handleTemplateDelete(template.id)}
+                onArchive={() => archiveTemplate(template.id)}
+              />
+            )}
+          </Container>
+        )
+      ))
+    )}
+  </div>
 )}
+
 
 {navItem === 'Trash' && (
   <div>
